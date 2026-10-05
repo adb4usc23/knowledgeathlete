@@ -622,11 +622,38 @@ const SITES = [
   {
     id: "frequency-effect",
     title: "The Frequency Effect",
-    desc: "The companion app — explore the science of sound, resonance, and how frequency shapes mind and body.",
+    desc: "The companion app — tune your field and work the book chapter by chapter: emotion, the heart, and the frequency you broadcast into reality.",
     tag: "Companion App",
-    url: "#",
+    url: "/frequency-effect/",
     glyph: "∿",
-    banner: "linear-gradient(135deg, #061a2b 0%, #0e6b7e 55%, #6ee7d8 100%)"
+    banner: "linear-gradient(135deg, #07101f 0%, #0e4f7a 50%, #46c5f0 100%)",
+    /* Original artwork from the book cover: a droplet sending concentric
+       ripples across the field, a waveform, and a faint torus. */
+    art: `<svg viewBox="0 0 360 128" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="feGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#7ee0e6"/>
+          <stop offset="1" stop-color="#46c5f0"/>
+        </linearGradient>
+      </defs>
+      <g fill="none" stroke="url(#feGrad)">
+        <ellipse cx="180" cy="80" rx="26" ry="9" stroke-width="2.4" opacity="0.95"/>
+        <ellipse cx="180" cy="80" rx="54" ry="19" stroke-width="2" opacity="0.68"/>
+        <ellipse cx="180" cy="80" rx="88" ry="31" stroke-width="1.6" opacity="0.48"/>
+        <ellipse cx="180" cy="80" rx="128" ry="45" stroke-width="1.3" opacity="0.3"/>
+        <ellipse cx="180" cy="80" rx="172" ry="60" stroke-width="1" opacity="0.18"/>
+      </g>
+      <g class="art-float">
+        <path d="M180 26 q7 15 0 29 q-7 -14 0 -29 Z" fill="#9fe8ec" opacity="0.95"/>
+        <circle cx="180" cy="74" r="5.5" fill="#d6f6f8"/>
+      </g>
+      <path d="M0 110 Q 30 95 60 110 T 120 110 T 180 110 T 240 110 T 300 110 T 360 110" fill="none" stroke="url(#feGrad)" stroke-width="2" opacity="0.55"/>
+      <g fill="none" stroke="#7ee0e6" stroke-width="1" opacity="0.22">
+        <ellipse cx="44" cy="38" rx="30" ry="11"/>
+        <ellipse cx="44" cy="38" rx="30" ry="11" transform="rotate(60 44 38)"/>
+        <ellipse cx="44" cy="38" rx="30" ry="11" transform="rotate(120 44 38)"/>
+      </g>
+    </svg>`,
   },
   {
     id: "llms",
