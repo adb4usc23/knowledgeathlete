@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knowledge Athlete — Train Your Mind</title>
+<meta name="description" content="Knowledge Athlete — a collection of interactive masterclasses and companion apps. Train your mind like an athlete trains their body.">
+<style>
+  /* ============================================================
+     KNOWLEDGE ATHLETE — knowledgeathlete.com
+     Dark & premium landing page with Google sign-in + progress.
+     • To edit the cards: see the SITES list in the first <script>.
+     • Google sign-in is configured via FIREBASE_CONFIG in the
+       last <script> (already filled in).
+     ============================================================ */
+
+  :root {
+    --bg: #0a0b10;
+    --bg-soft: #10121a;
+    --card: rgba(255, 255, 255, 0.035);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text: #eef0f6;
+    --text-dim: #9aa1b5;
+    --text-faint: #5c6378;
+    --gold: #d8b45c;
+    --gold-soft: rgba(216, 180, 92, 0.55);
+    --green: #4fc37b;
+    --radius: 18px;
+    --font-display: "Marcellus", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ---------- ambient background ---------- */
+  .ambient {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(900px 500px at 15% -5%, rgba(88, 101, 242, 0.14), transparent 60%),
+      radial-gradient(800px 500px at 85% 0%, rgba(216, 180, 92, 0.10), transparent 60%),
+      radial-gradient(700px 600px at 50% 110%, rgba(45, 156, 219, 0.08), transparent 60%);
+  }
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 28px 80px;
+  }
+
+  /* ---------- header ---------- */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 30px 0 0;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    text-decoration: none;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+  .brand-mark {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, rgba(216,180,92,0.18), rgba(216,180,92,0.04));
+    border: 1px solid rgba(216, 180, 92, 0.35);
+    box-shadow: 0 0 24px rgba(216, 180, 92, 0.12);
+  }
+  .brand-mark svg { width: 24px; height: 24px; }
+  .brand-name {
+    font-family: var(--font-display);
+    font-size: 19px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .brand-name em {
+    font-style: normal;
+    color: var(--gold);
+  }
+  @media (max-width: 640px) { .brand-name { display: none; } }
+
+  /* ---------- auth area ---------- */
+  .auth-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .auth-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(6px);
+  }
+  .auth-btn:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.07);
+  }
+  .auth-btn svg { width: 17px; height: 17px; }
+  .user-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 6px 14px 6px 6px;
+  }
+  .user-chip img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(216, 180, 92, 0.5);
+  }
+  .user-chip .uname {
+    font-size: 13px;
+    font-weight: 600;
+    max-width: 130px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  @media (max-width: 640px) { .user-chip .uname { display: none; } }
+  .signout-btn {
+    font-size: 12px;
+    color: var(--text-faint);
+    background: none;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    padding: 4px;
+    font-family: var(--font-body);
+  }
+  .signout-btn:hover { color: var(--text-dim); text-decoration: underline; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    padding: 92px 0 64px;
+    text-align: center;
+    position: relative;
+  }
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 26px;
+  }
+  .hero-kicker::before, .hero-kicker::after {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-soft));
+  }
+  .hero-kicker::after {
+    background: linear-gradient(90deg, var(--gold-soft), transparent);
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(44px, 7.5vw, 84px);
+    line-height: 1.04;
+    letter-spacing: 0.01em;
+  }
+  h1 .shimmer {
+    background: linear-gradient(100deg, #f5e9c8 0%, var(--gold) 30%, #fdf6dd 50%, var(--gold) 70%, #f5e9c8 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 7s linear infinite;
+  }
+  @keyframes shimmer {
+    to { background-position: 200% center; }
+  }
+  .hero-sub {
+    margin: 26px auto 0;
+    max-width: 640px;
+    font-size: clamp(16px, 2.2vw, 19px);
+    line-height: 1.65;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+  .hero-sub strong { color: var(--text); font-weight: 500; }
+
+  /* ---------- training summary bar ---------- */
+  .training-bar {
+    display: none;
+    align-items: center;
+    gap: 18px;
+    margin: 0 auto 40px;
+    max-width: 640px;
+    padding: 16px 22px;
+    border-radius: 14px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(8px);
+  }
+  .training-bar.visible { display: flex; }
+  .training-bar .tb-label {
+    font-size: 13px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+  .training-bar .tb-label strong { color: var(--gold); font-weight: 600; }
+  .tb-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+  .tb-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #e8cf8e, var(--gold));
+    transition: width 0.5s ease;
+  }
+
+  /* ---------- filter pills ---------- */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 42px;
+  }
+  .pill {
+    font-family: var(--font-body);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    padding: 9px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .pill:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .pill.active {
+    color: #14120a;
+    background: linear-gradient(135deg, #e8cf8e, var(--gold));
+    border-color: transparent;
+    box-shadow: 0 4px 24px rgba(216, 180, 92, 0.25);
+    font-weight: 600;
+  }
+
+  /* ---------- card grid ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 22px;
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius);
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.25, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+    backdrop-filter: blur(8px);
+    animation: rise 0.6s ease both;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+
+  .card-banner {
+    position: relative;
+    height: 128px;
+    display: flex;
+    align-items: flex-end;
+    padding: 18px 22px;
+    overflow: hidden;
+  }
+  .card-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 30%, rgba(10, 11, 16, 0.55));
+  }
+  .card-glyph {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-family: var(--font-display);
+    font-size: 64px;
+    line-height: 1;
+    opacity: 0.22;
+    color: #fff;
+    user-select: none;
+    transition: transform 0.5s ease, opacity 0.4s ease;
+  }
+  .card:hover .card-glyph { transform: scale(1.12) rotate(-4deg); opacity: 0.34; }
+
+  .card-tag {
+    position: relative;
+    z-index: 1;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(10, 11, 16, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px 22px 22px;
+    gap: 10px;
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.015em;
+    line-height: 1.25;
+  }
+  .card-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    font-weight: 300;
+    flex: 1;
+  }
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .card-cta .arrow { transition: transform 0.3s ease; }
+  .card:hover .card-cta .arrow { transform: translateX(5px); }
+
+  /* progress chip (shown when signed in) */
+  .progress-chip {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-faint);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .progress-chip:hover { border-color: rgba(255,255,255,0.3); color: var(--text-dim); }
+  .progress-chip.in_progress {
+    color: var(--gold);
+    border-color: rgba(216, 180, 92, 0.45);
+    background: rgba(216, 180, 92, 0.08);
+  }
+  .progress-chip.completed {
+    color: var(--green);
+    border-color: rgba(79, 195, 123, 0.45);
+    background: rgba(79, 195, 123, 0.08);
+  }
+
+  /* coming-soon state */
+  .card.soon { cursor: default; }
+  .card.soon:hover { transform: none; box-shadow: none; border-color: var(--card-border); }
+  .card.soon .card-banner { filter: saturate(0.35) brightness(0.8); }
+  .card.soon .card-cta { color: var(--text-faint); }
+
+  /* ---------- toast ---------- */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 50;
+    max-width: 420px;
+    width: calc(100% - 40px);
+    padding: 14px 20px;
+    border-radius: 12px;
+    background: #1a1d28;
+    border: 1px solid rgba(216, 180, 92, 0.35);
+    color: var(--text-dim);
+    font-size: 13.5px;
+    line-height: 1.5;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ---------- footer ---------- */
+  footer {
+    margin-top: 90px;
+    padding-top: 34px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    font-size: 13px;
+    color: var(--text-faint);
+  }
+  footer .motto {
+    font-family: var(--font-display);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient"></div>
+<div class="grain"></div>
+
+<div class="page">
+
+  <header>
+    <a class="brand" href="#">
+      <span class="brand-mark">
+        <!-- laurel + spark mark -->
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3l1.7 4.6L18 9.3l-4.3 1.7L12 15.6l-1.7-4.6L6 9.3l4.3-1.7L12 3z" fill="#d8b45c"/>
+          <path d="M4 14c1 3.8 3.4 6.2 6 7-1.2-2.2-1.6-4.6-1.2-7" stroke="#d8b45c" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.8"/>
+          <path d="M20 14c-1 3.8-3.4 6.2-6 7 1.2-2.2 1.6-4.6 1.2-7" stroke="#d8b45c" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.8"/>
+        </svg>
+      </span>
+      <span class="brand-name">Knowledge<em>Athlete</em></span>
+    </a>
+    <div class="auth-area" id="authArea">
+      <button class="auth-btn" id="signInBtn">
+        <!-- Google G -->
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.2 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+          <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.2 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+          <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
+          <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/>
+        </svg>
+        Sign in with Google
+      </button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-kicker">Masterclasses &amp; Companion Apps</div>
+    <h1>Mastery is<br><span class="shimmer">unleashed, not built.</span></h1>
+    <p class="hero-sub">
+      An athlete trains the body. A <strong>true athlete</strong> transcends the mind.
+      Dismantle the endless noise of your mind. Enter a private sanctuary of subtraction —
+      direct realizations built to return you to yourself, instantly.
+    </p>
+  </section>
+
+  <div class="training-bar" id="trainingBar">
+    <span class="tb-label" id="tbLabel"></span>
+    <div class="tb-track"><div class="tb-fill" id="tbFill"></div></div>
+  </div>
+
+  <div class="filters" id="filters"></div>
+
+  <main class="grid" id="grid"></main>
+
+  <footer>
+    <span class="motto">Knowledge Athlete</span>
+    <span>© 2026 KnowledgeAthlete.com — Mental reps, daily.</span>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==============================================================
+   EDIT YOUR CARDS HERE
+   --------------------------------------------------------------
+   Each entry below is one card. To link a card to its live site,
+   replace  url: "#"  with the real address, e.g.
+       url: "https://llm-masterclass.pages.dev"
+   Cards with url: "#" automatically show as "Coming Soon".
+   To add a new card, copy any block and edit it (give it a
+   unique id — that's what progress is saved under).
+   Categories: "Masterclass", "Companion App", "Longevity"
+   ============================================================== */
+const SITES = [
+  {
+    id: "outsmarting-reality",
+    title: "Outsmarting Reality",
+    desc: "The companion app — tools and interactive exercises for seeing through the illusions that shape your thinking.",
+    tag: "Companion App",
+    url: "#",
+    glyph: "◉",
+    banner: "linear-gradient(135deg, #240b36 0%, #6a2c91 55%, #c31432 100%)"
+  },
+  {
+    id: "frequency-effect",
+    title: "The Frequency Effect",
+    desc: "The companion app — explore the science of sound, resonance, and how frequency shapes mind and body.",
+    tag: "Companion App",
+    url: "#",
+    glyph: "∿",
+    banner: "linear-gradient(135deg, #061a2b 0%, #0e6b7e 55%, #6ee7d8 100%)"
+  },
+  {
+    id: "llms",
+    title: "Masterclass on LLMs",
+    desc: "How large language models actually work — from tokens and transformers to the AI systems reshaping everything.",
+    tag: "Masterclass",
+    url: "#",
+    glyph: "◈",
+    banner: "linear-gradient(135deg, #1a2a6c 0%, #2d9cdb 55%, #78e0dc 100%)"
+  },
+  {
+    id: "politics",
+    title: "Masterclass on Politics",
+    desc: "Power, persuasion, and the machinery of government — understand how the political world really operates.",
+    tag: "Masterclass",
+    url: "#",
+    glyph: "⚖",
+    banner: "linear-gradient(135deg, #3d0b0b 0%, #8e2a2a 55%, #d8b45c 100%)"
+  },
+  {
+    id: "star-trek",
+    title: "Masterclass on Star Trek",
+    desc: "Six decades of the final frontier — the ideas, eras, and philosophy behind science fiction's boldest universe.",
+    tag: "Masterclass",
+    url: "#",
+    glyph: "✦",
+    banner: "linear-gradient(135deg, #0b1e3d 0%, #24488e 55%, #c0432f 100%)"
+  },
+  {
+    id: "wheel-of-time",
+    title: "Masterclass on Wheel of Time",
+    desc: "The Pattern, the Power, and fourteen volumes of prophecy — a guided journey through Robert Jordan's epic.",
+    tag: "Masterclass",
+    url: "#",
+    glyph: "☯",
+    banner: "linear-gradient(135deg, #1c1206 0%, #6e4a1c 55%, #e0c98f 100%)"
+  },
+  {
+    id: "matrix",
+    title: "The Matrix Masterclass",
+    desc: "Simulation, choice, and control — decode the philosophy and craft behind the film that changed cinema.",
+    tag: "Masterclass",
+    url: "#",
+    glyph: "▚",
+    banner: "linear-gradient(135deg, #020d02 0%, #0d3d17 55%, #37c871 100%)"
+  },
+  {
+    id: "pascoe-longevity",
+    title: "Dave Pascoe Longevity",
+    desc: "Inside one of the world's most measured longevity protocols — routines, data, and lessons for a longer healthspan.",
+    tag: "Longevity",
+    url: "#",
+    glyph: "∞",
+    banner: "linear-gradient(135deg, #10250f 0%, #3e7a2e 55%, #bce784 100%)"
+  },
+  {
+    id: "more-soon",
+    title: "More In Training",
+    desc: "New masterclasses and companion experiences are always in the works. Check back soon for the next release.",
+    tag: "Coming Soon",
+    url: "#",
+    glyph: "✧",
+    banner: "linear-gradient(135deg, #16181f 0%, #2a2e3d 60%, #4a5068 100%)"
+  }
+];
+/* ================== end of editable section ================== */
+
+/* Shared app state (auth module below fills these in) */
+const KA = {
+  user: null,          // { name, photo }
+  progress: {},        // { siteId: "in_progress" | "completed" }
+  saveProgress: null,  // set by the Firebase module when signed in
+  signIn: null,        // set by the Firebase module
+  signOut: null
+};
+
+const grid = document.getElementById("grid");
+const filtersEl = document.getElementById("filters");
+const categories = ["All", ...new Set(SITES.map(s => s.tag).filter(t => t !== "Coming Soon"))];
+let activeFilter = "All";
+
+const PROGRESS_LABELS = { none: "Start", in_progress: "In Progress", completed: "Completed ✓" };
+const NEXT_STATE = { none: "in_progress", in_progress: "completed", completed: "none" };
+
+function trackableSites() { return SITES.filter(s => s.tag !== "Coming Soon"); }
+
+function render() {
+  grid.innerHTML = "";
+  SITES
+    .filter(s => activeFilter === "All" || s.tag === activeFilter)
+    .forEach((s, i) => {
+      const isSoon = !s.url || s.url === "#";
+      const el = document.createElement(isSoon ? "div" : "a");
+      el.className = "card" + (isSoon ? " soon" : "");
+      if (!isSoon) {
+        el.href = s.url;
+        el.target = "_blank";
+        el.rel = "noopener";
+      }
+      el.style.animationDelay = (i * 0.06) + "s";
+
+      const status = KA.progress[s.id] || "none";
+      const showProgress = KA.user && s.tag !== "Coming Soon";
+      const progressHtml = showProgress
+        ? `<button class="progress-chip ${status}" data-site="${s.id}" title="Click to update your progress">${PROGRESS_LABELS[status]}</button>`
+        : "";
+
+      el.innerHTML = `
+        <div class="card-banner" style="background:${s.banner}">
+          <span class="card-glyph">${s.glyph}</span>
+          <span class="card-tag">${s.tag}</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">${s.title}</div>
+          <div class="card-desc">${s.desc}</div>
+          <div class="card-foot">
+            <span class="card-cta">${isSoon ? "Coming Soon" : `Enter <span class="arrow">→</span>`}</span>
+            ${progressHtml}
+          </div>
+        </div>`;
+
+      const chip = el.querySelector(".progress-chip");
+      if (chip) {
+        chip.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const id = chip.dataset.site;
+          const next = NEXT_STATE[KA.progress[id] || "none"];
+          if (next === "none") delete KA.progress[id];
+          else KA.progress[id] = next;
+          render();
+          renderTrainingBar();
+          if (KA.saveProgress) KA.saveProgress();
+        });
+      }
+      grid.appendChild(el);
+    });
+}
+
+function renderTrainingBar() {
+  const bar = document.getElementById("trainingBar");
+  if (!KA.user) { bar.classList.remove("visible"); return; }
+  const total = trackableSites().length;
+  const done = trackableSites().filter(s => KA.progress[s.id] === "completed").length;
+  const firstName = (KA.user.name || "Athlete").split(" ")[0];
+  document.getElementById("tbLabel").innerHTML =
+    `Welcome, <strong>${firstName}</strong> — ${done} of ${total} completed`;
+  document.getElementById("tbFill").style.width = (total ? (done / total) * 100 : 0) + "%";
+  bar.classList.add("visible");
+}
+
+function renderAuthArea() {
+  const area = document.getElementById("authArea");
+  if (KA.user) {
+    area.innerHTML = `
+      <span class="user-chip">
+        <img src="${KA.user.photo || ""}" alt="" referrerpolicy="no-referrer"
+             onerror="this.style.display='none'">
+        <span class="uname">${KA.user.name || ""}</span>
+      </span>
+      <button class="signout-btn" id="signOutBtn">Sign out</button>`;
+    document.getElementById("signOutBtn").onclick = () => KA.signOut && KA.signOut();
+  } else {
+    area.innerHTML = document.getElementById("authTemplate").innerHTML;
+    document.getElementById("signInBtn").onclick = () => KA.signIn
+      ? KA.signIn()
+      : showToast("Sign-in isn't connected yet — add your Firebase config (see the setup guide) to enable Google login.");
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => t.classList.remove("show"), 4200);
+}
+
+/* keep a copy of the sign-in button markup for re-rendering */
+const authTemplate = document.createElement("template");
+authTemplate.id = "authTemplate";
+authTemplate.innerHTML = document.getElementById("authArea").innerHTML;
+document.body.appendChild(authTemplate);
+
+categories.forEach(cat => {
+  const b = document.createElement("button");
+  b.className = "pill" + (cat === activeFilter ? " active" : "");
+  const labels = { "All": "All", "Masterclass": "Masterclasses", "Companion App": "Companion Apps", "Longevity": "Longevity" };
+  b.textContent = labels[cat] || cat;
+  b.onclick = () => {
+    activeFilter = cat;
+    document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+    b.classList.add("active");
+    render();
+  };
+  filtersEl.appendChild(b);
+});
+
+renderAuthArea();
+render();
+
+/* expose for the auth module */
+window.KA = KA;
+window.KAUI = { render, renderTrainingBar, renderAuthArea, showToast };
+</script>
+
+<script type="module">
+/* ==============================================================
+   GOOGLE SIGN-IN + DATABASE (Firebase)
+   --------------------------------------------------------------
+   Config below is for the "knowledgeathlete-4a1d9" project.
+   Remaining setup in the Firebase console (see FIREBASE-SETUP.md):
+   • Authentication → enable the Google provider
+   • Authentication → Settings → Authorized domains →
+     add knowledgeathlete.com (and your .pages.dev URL)
+   • Firestore Database → create + publish the security rules
+   ============================================================== */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBUp6joJ2zRIBxY-0UyjlyI2g8gYUXx4Hw",
+  authDomain: "knowledgeathlete-4a1d9.firebaseapp.com",
+  projectId: "knowledgeathlete-4a1d9",
+  storageBucket: "knowledgeathlete-4a1d9.firebasestorage.app",
+  messagingSenderId: "1013900118629",
+  appId: "1:1013900118629:web:c7ecf11a4984222af0548c",
+  measurementId: "G-FFF327CSNL"
+};
+/* ================== end of editable section ================== */
+
+const configured = !Object.values(FIREBASE_CONFIG).some(v => String(v).startsWith("PASTE_"));
+
+if (configured) {
+  try {
+    const [{ initializeApp }, authMod, fsMod] = await Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")
+    ]);
+    const { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } = authMod;
+    const { getFirestore, doc, getDoc, setDoc, serverTimestamp } = fsMod;
+
+    const app = initializeApp(FIREBASE_CONFIG);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    const KA = window.KA, UI = window.KAUI;
+
+    KA.signIn = async () => {
+      try { await signInWithPopup(auth, provider); }
+      catch (e) {
+        if (e.code !== "auth/popup-closed-by-user") {
+          UI.showToast("Sign-in failed: " + (e.message || e.code || "unknown error"));
+        }
+      }
+    };
+
+    KA.signOut = () => signOut(auth);
+
+    KA.saveProgress = async () => {
+      const u = auth.currentUser;
+      if (!u) return;
+      try {
+        await setDoc(doc(db, "users", u.uid), {
+          displayName: u.displayName || "",
+          email: u.email || "",
+          photoURL: u.photoURL || "",
+          progress: KA.progress,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+      } catch (e) {
+        UI.showToast("Couldn't save progress — check your connection.");
+      }
+    };
+
+    onAuthStateChanged(auth, async (u) => {
+      if (u) {
+        KA.user = { name: u.displayName, photo: u.photoURL };
+        try {
+          const snap = await getDoc(doc(db, "users", u.uid));
+          KA.progress = (snap.exists() && snap.data().progress) || {};
+        } catch (e) { KA.progress = {}; }
+        /* create/refresh the user record on every sign-in */
+        KA.saveProgress();
+      } else {
+        KA.user = null;
+        KA.progress = {};
+      }
+      UI.renderAuthArea();
+      UI.renderTrainingBar();
+      UI.render();
+    });
+  } catch (e) {
+    console.warn("Firebase failed to load:", e);
+  }
+}
+</script>
+
+</body>
+</html>
