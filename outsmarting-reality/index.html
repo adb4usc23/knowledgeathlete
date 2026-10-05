@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outsmarting Reality — Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0c; --bg-2:#101015; --panel:#15151c; --panel-2:#1b1b24;
+  --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
+  --ink:#f4f1 ea; --ink:#f4f1ea; --muted:#9b97a3; --faint:#65626d;
+  --gold:#c9a86a; --gold-2:#e7cf9a; --gold-soft:rgba(201,168,106,.14);
+  --accent:#b8a4ff; --green:#7fd1a8; --red:#e08b7d; --blue:#8fb4e3;
+  --r:16px; --r-sm:10px; --shadow:0 24px 60px -20px rgba(0,0,0,.7);
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--sans);
+  font-size:15px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(900px 600px at 12% -10%, rgba(201,168,106,.10), transparent 60%),
+    radial-gradient(800px 700px at 110% 10%, rgba(184,164,255,.07), transparent 55%),
+    radial-gradient(700px 700px at 50% 120%, rgba(143,180,227,.06), transparent 60%);
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:20px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.16)}
+button{font-family:inherit;cursor:pointer}
+input,textarea,select{font-family:inherit}
+
+/* LAYOUT */
+.app{position:relative;z-index:1;display:grid;grid-template-columns:264px 1fr;height:100vh}
+.sidebar{
+  border-right:1px solid var(--line); background:rgba(10,10,12,.6);
+  backdrop-filter:blur(14px); display:flex;flex-direction:column; padding:22px 16px; gap:6px; overflow-y:auto;
+}
+.brand{padding:6px 10px 18px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.brand .mark{font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:.2px;line-height:1.15}
+.brand .mark em{font-style:italic;color:var(--gold-2)}
+.brand .sub{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-top:7px}
+.nav-group{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);padding:14px 12px 6px}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:var(--r-sm);
+  color:var(--muted);font-weight:500;font-size:13.5px;border:1px solid transparent;transition:.18s;white-space:nowrap
+}
+.nav-item:hover{background:var(--panel);color:var(--ink)}
+.nav-item.active{background:var(--gold-soft);color:var(--gold-2);border-color:rgba(201,168,106,.22)}
+.nav-item .ico{width:17px;height:17px;flex:0 0 auto;opacity:.9}
+.nav-item .badge{margin-left:auto;font-size:10px;background:var(--panel-2);color:var(--muted);padding:1px 7px;border-radius:20px}
+.sidebar-foot{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--faint);line-height:1.5}
+
+.main{overflow-y:auto;height:100vh;position:relative}
+.wrap{max-width:980px;margin:0 auto;padding:46px 48px 120px}
+.view{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+/* TYPE */
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 14px}
+h1.display{font-family:var(--serif);font-weight:600;font-size:42px;line-height:1.08;letter-spacing:-.01em;margin:0 0 12px}
+h1.display em{font-style:italic;color:var(--gold-2)}
+.lead{font-size:17px;color:var(--muted);max-width:62ch;margin:0 0 8px}
+h2.sec{font-family:var(--serif);font-weight:600;font-size:24px;margin:42px 0 16px;letter-spacing:-.01em}
+.serif{font-family:var(--serif)}
+
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.card.glass{background:linear-gradient(180deg,rgba(27,27,36,.7),rgba(21,21,28,.55))}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:880px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+/* HERO DASHBOARD */
+.hero{
+  position:relative;border-radius:22px;overflow:hidden;padding:38px 36px;
+  background:linear-gradient(135deg,rgba(28,24,18,.9),rgba(16,16,21,.9));
+  border:1px solid var(--line-2);box-shadow:var(--shadow)
+}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 300px at 100% 0,rgba(201,168,106,.18),transparent 60%);pointer-events:none}
+.hero .greet{font-size:13px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.hero h2{font-family:var(--serif);font-size:32px;font-weight:600;margin:10px 0 6px;letter-spacing:-.01em;max-width:24ch}
+.hero p{color:var(--muted);max-width:54ch;margin:0}
+
+/* STATS */
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden}
+.stat .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.stat .v{font-family:var(--serif);font-size:30px;font-weight:600;margin-top:6px;line-height:1}
+.stat .v small{font-size:14px;color:var(--muted);font-family:var(--sans);font-weight:500}
+.stat .meta{font-size:12px;color:var(--muted);margin-top:4px}
+.ring{--p:0;width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--gold) calc(var(--p)*1%),rgba(255,255,255,.08) 0);display:grid;place-items:center;position:absolute;top:16px;right:16px}
+.ring::before{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--panel)}
+.ring span{position:relative;font-size:11px;font-weight:600;color:var(--gold-2)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:11px;border:1px solid var(--line-2);background:var(--panel-2);color:var(--ink);font-weight:600;font-size:13.5px;transition:.18s}
+.btn:hover{border-color:var(--gold);color:var(--gold-2);transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:#1a140a;border:none}
+.btn.primary:hover{filter:brightness(1.06);color:#1a140a}
+.btn.ghost{background:transparent}
+.btn.sm{padding:7px 13px;font-size:12.5px;border-radius:9px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* PILLS / CHIPS */
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:4px 11px;border-radius:20px;background:var(--panel-2);border:1px solid var(--line);color:var(--muted)}
+.chip.gold{background:var(--gold-soft);border-color:rgba(201,168,106,.25);color:var(--gold-2)}
+.chip.green{background:rgba(127,209,168,.12);border-color:rgba(127,209,168,.25);color:var(--green)}
+
+/* JOURNEY */
+.level-card{position:relative;display:flex;gap:20px;padding:24px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel);transition:.2s;cursor:pointer;overflow:hidden}
+.level-card:hover{border-color:var(--line-2);transform:translateY(-2px);box-shadow:var(--shadow)}
+.level-card.locked{opacity:.5;cursor:default}
+.level-card.locked:hover{transform:none;box-shadow:none;border-color:var(--line)}
+.level-num{font-family:var(--serif);font-size:40px;font-weight:600;color:var(--gold);line-height:1;width:60px;flex:0 0 auto;opacity:.85}
+.level-card h3{font-family:var(--serif);font-size:21px;font-weight:600;margin:0 0 5px}
+.level-card .desc{color:var(--muted);font-size:14px;margin:0 0 12px;max-width:54ch}
+.lbar{height:6px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden;max-width:280px}
+.lbar > i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-2));border-radius:6px;transition:width .6s}
+.lesson-row{display:flex;align-items:center;gap:14px;padding:15px 18px;border:1px solid var(--line);border-radius:12px;background:var(--panel);margin-bottom:10px;transition:.16s;cursor:pointer}
+.lesson-row:hover{border-color:var(--line-2);background:var(--panel-2)}
+.lesson-row .dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--line-2);flex:0 0 auto;display:grid;place-items:center;font-size:12px}
+.lesson-row.done .dot{background:var(--gold);border-color:var(--gold);color:#1a140a}
+.lesson-row .t{font-weight:600;font-size:14.5px}
+.lesson-row .m{font-size:12.5px;color:var(--faint)}
+.lesson-row .arrow{margin-left:auto;color:var(--faint)}
+
+/* LESSON VIEW */
+.lesson-hero{border-radius:20px;padding:34px;background:linear-gradient(135deg,rgba(26,24,20,.85),rgba(15,15,20,.9));border:1px solid var(--line-2);margin-bottom:8px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px}
+.callout{border-left:3px solid var(--gold);background:var(--gold-soft);padding:16px 20px;border-radius:0 12px 12px 0;margin:18px 0}
+.callout .lab{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px}
+.quote{font-family:var(--serif);font-style:italic;font-size:20px;line-height:1.45;color:var(--gold-2);border:none;margin:24px 0;padding:0 0 0 22px;border-left:2px solid rgba(201,168,106,.4)}
+.quote cite{display:block;font-style:normal;font-family:var(--sans);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-top:10px}
+.model{display:flex;gap:14px;align-items:flex-start;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.model .n{font-family:var(--serif);font-size:22px;color:var(--gold);flex:0 0 auto}
+.applist li{margin-bottom:8px;color:var(--muted)}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0}
+.flow .node{padding:8px 13px;border-radius:9px;background:var(--panel-2);border:1px solid var(--line-2);font-size:12.5px;font-weight:600}
+.flow .node.gold{background:var(--gold-soft);border-color:rgba(201,168,106,.3);color:var(--gold-2)}
+.flow .ar{color:var(--gold);font-weight:700}
+
+/* FORMS */
+label.fld{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin:16px 0 7px;letter-spacing:.01em}
+label.fld .hint{color:var(--faint);font-weight:400;font-size:12px}
+.input,textarea.input,select.input{
+  width:100%;background:var(--bg-2);border:1px solid var(--line-2);border-radius:11px;
+  padding:12px 14px;color:var(--ink);font-size:14px;transition:.16s;resize:vertical
+}
+.input:focus,textarea.input:focus,select.input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+textarea.input{min-height:84px;line-height:1.55}
+.range{width:100%;-webkit-appearance:none;height:6px;border-radius:6px;background:rgba(255,255,255,.1);outline:none}
+.range::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--gold-2);cursor:pointer;border:3px solid var(--bg);box-shadow:0 0 0 1px var(--gold)}
+
+/* TOOLS GALLERY */
+.tool-card{position:relative;padding:24px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel);cursor:pointer;transition:.2s;overflow:hidden;min-height:172px;display:flex;flex-direction:column}
+.tool-card:hover{transform:translateY(-3px);border-color:var(--line-2);box-shadow:var(--shadow)}
+.tool-card .ti{font-size:24px;margin-bottom:14px}
+.tool-card h3{font-family:var(--serif);font-size:19px;font-weight:600;margin:0 0 7px}
+.tool-card p{color:var(--muted);font-size:13.5px;margin:0 0 auto}
+.tool-card .open{margin-top:14px;font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.04em}
+.tool-card::after{content:"";position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,106,.12),transparent 70%)}
+
+/* STEPPER */
+.steps{display:flex;gap:6px;margin:0 0 22px}
+.steps .s{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.1)}
+.steps .s.on{background:var(--gold)}
+.steps .s.done{background:rgba(201,168,106,.5)}
+
+/* MEDITATION / TIMER */
+.orb{width:160px;height:160px;border-radius:50%;margin:10px auto;position:relative;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 40%,rgba(201,168,106,.35),rgba(201,168,106,.05));
+  box-shadow:0 0 60px rgba(201,168,106,.18)}
+.orb.breathe{animation:breathe 8s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.8);box-shadow:0 0 40px rgba(201,168,106,.12)}50%{transform:scale(1.08);box-shadow:0 0 80px rgba(201,168,106,.28)}}
+.orb .tt{font-family:var(--serif);font-size:30px;color:var(--gold-2);font-weight:600}
+.bigtimer{font-family:var(--serif);font-size:54px;font-weight:600;text-align:center;letter-spacing:.02em}
+
+/* LIST ITEMS (ledger/journal) */
+.li{display:flex;align-items:flex-start;gap:13px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);margin-bottom:10px}
+.li .check{width:22px;height:22px;border-radius:6px;border:2px solid var(--line-2);flex:0 0 auto;display:grid;place-items:center;cursor:pointer;font-size:12px;margin-top:1px}
+.li .check.on{background:var(--green);border-color:var(--green);color:#0a1a12}
+.li .check.no{background:var(--red);border-color:var(--red);color:#1a0a08}
+.li .body{flex:1;min-width:0}
+.li .body .x{font-weight:600;font-size:14px}
+.li .body .y{font-size:12px;color:var(--faint);margin-top:2px}
+.li .del{color:var(--faint);font-size:18px;line-height:1;background:none;border:none;padding:4px}
+.li .del:hover{color:var(--red)}
+
+.empty{text-align:center;padding:40px 20px;color:var(--faint)}
+.empty .ico{font-size:34px;opacity:.5;margin-bottom:10px}
+
+/* LIBRARY */
+.lib-card{padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);transition:.18s}
+.lib-card:hover{border-color:var(--line-2)}
+.lib-card .cat{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.lib-card h4{font-family:var(--serif);font-size:17px;margin:8px 0 6px;font-weight:600}
+.lib-card p{color:var(--muted);font-size:13px;margin:0}
+.search{width:100%;background:var(--bg-2);border:1px solid var(--line-2);border-radius:12px;padding:13px 16px 13px 42px;color:var(--ink);font-size:14px}
+.searchwrap{position:relative;margin-bottom:8px}
+.searchwrap .si{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--faint)}
+
+/* CHALLENGE */
+.dots{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}
+.dots .d{width:24px;height:24px;border-radius:7px;background:rgba(255,255,255,.07);border:1px solid var(--line);display:grid;place-items:center;font-size:10px;color:var(--faint);cursor:pointer;transition:.14s}
+.dots .d.on{background:var(--gold);border-color:var(--gold);color:#1a140a;font-weight:700}
+.dots .d.today{box-shadow:0 0 0 2px var(--gold-2)}
+
+/* ACHIEVEMENTS */
+.ach{display:flex;gap:14px;align-items:center;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);transition:.18s}
+.ach.locked{opacity:.4}
+.ach .em{font-size:26px;width:46px;height:46px;display:grid;place-items:center;border-radius:12px;background:var(--gold-soft);flex:0 0 auto}
+.ach .nm{font-weight:600;font-size:14px}
+.ach .ds{font-size:12px;color:var(--faint)}
+
+/* TOAST */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--gold);color:var(--ink);padding:13px 22px;border-radius:13px;box-shadow:var(--shadow);z-index:200;opacity:0;transition:.3s;font-weight:600;font-size:13.5px;display:flex;gap:10px;align-items:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* MODAL */
+.scrim{position:fixed;inset:0;background:rgba(5,5,7,.72);backdrop-filter:blur(6px);z-index:150;display:none;align-items:center;justify-content:center;padding:24px;animation:fade .2s}
+.scrim.show{display:flex}
+.modal{background:var(--panel);border:1px solid var(--line-2);border-radius:20px;max-width:560px;width:100%;padding:30px;max-height:86vh;overflow-y:auto;box-shadow:var(--shadow)}
+
+.divider{height:1px;background:var(--line);margin:22px 0}
+.mut{color:var(--muted)} .fa{color:var(--faint)} .gold{color:var(--gold-2)}
+.tiny{font-size:12px} .center{text-align:center}
+.row{display:flex;gap:12px;align-items:center}
+.sp{justify-content:space-between}
+.tag{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:700}
+@media(max-width:760px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:-300px;top:0;bottom:0;width:264px;z-index:120;transition:.3s}
+  .sidebar.open{left:0}
+  .wrap{padding:24px 18px 100px}
+  h1.display{font-size:32px}
+  .menu-btn{display:grid !important}
+}
+.menu-btn{display:none;position:fixed;top:16px;left:16px;z-index:130;width:42px;height:42px;border-radius:11px;background:var(--panel-2);border:1px solid var(--line-2);place-items:center}
+
+/* ===== AUTH SCREEN ===== */
+.app{display:none}
+.authwrap{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;animation:fade .4s}
+.authcard{width:100%;max-width:430px;background:linear-gradient(180deg,rgba(27,27,36,.85),rgba(21,21,28,.92));border:1px solid var(--line-2);border-radius:22px;padding:38px 34px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.authcard::after{content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,106,.16),transparent 70%);pointer-events:none}
+.authcard .mark{font-family:var(--serif);font-weight:600;font-size:24px;line-height:1.1}
+.authcard .mark em{font-style:italic;color:var(--gold-2)}
+.authcard .sub{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:8px 0 22px}
+.authcard h2{font-family:var(--serif);font-size:22px;font-weight:600;margin:0 0 4px}
+.authcard p.am{color:var(--muted);font-size:13.5px;margin:0 0 20px}
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border-radius:11px;border:1px solid var(--line-2);background:#fff;color:#1a140a;font-weight:600;font-size:14px;transition:.16s}
+.gbtn:hover{filter:brightness(.96)}
+.orline{display:flex;align-items:center;gap:12px;color:var(--faint);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0}
+.orline::before,.orline::after{content:"";flex:1;height:1px;background:var(--line)}
+.authmsg{font-size:12.5px;border-radius:10px;padding:10px 12px;margin-top:14px;display:none}
+.authmsg.err{display:block;background:rgba(224,139,125,.12);border:1px solid rgba(224,139,125,.3);color:var(--red)}
+.authmsg.ok{display:block;background:rgba(127,209,168,.12);border:1px solid rgba(127,209,168,.3);color:var(--green)}
+.authswitch{text-align:center;font-size:13px;color:var(--muted);margin-top:18px}
+.authswitch a{color:var(--gold-2);font-weight:600;cursor:pointer}
+.banner{background:var(--gold-soft);border-bottom:1px solid rgba(201,168,106,.25);color:var(--gold-2);font-size:12.5px;padding:8px 16px;text-align:center}
+.acct{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted)}
+.acct .em{color:var(--ink);font-weight:600;word-break:break-all}
+.acct .so{color:var(--faint);cursor:pointer;font-weight:600}
+.acct .so:hover{color:var(--red)}
+.syncdot{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--faint);margin-top:6px}
+.syncdot .d{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.syncdot.saving .d{background:var(--gold);animation:pulse 1s infinite}
+.syncdot.saved .d{background:var(--green)}
+.syncdot.off .d{background:var(--red)}
+@keyframes pulse{50%{opacity:.3}}
+</style>
+</head>
+<body>
+<button class="menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<div class="authwrap" id="authwrap" style="display:none">
+  <div class="authcard">
+    <div class="mark">Outsmarting <em>Reality</em></div>
+    <div class="sub">Companion</div>
+    <h2 id="auth_title">Welcome back</h2>
+    <p class="am" id="auth_sub">Sign in to continue your journey. Your progress syncs across every device.</p>
+    <button class="gbtn" id="auth_google" onclick="googleSignIn()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <div class="orline">or</div>
+    <label class="fld" style="margin-top:0">Email</label>
+    <input class="input" id="auth_email" type="email" placeholder="you@email.com" autocomplete="email">
+    <label class="fld">Password</label>
+    <input class="input" id="auth_pw" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')authSubmit()">
+    <div class="authmsg" id="auth_msg"></div>
+    <button class="btn primary" id="auth_submit" style="width:100%;margin-top:18px;justify-content:center" onclick="authSubmit()">Sign in</button>
+    <div class="authswitch" id="auth_switch">New here? <a onclick="authToggle()">Create an account</a></div>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="main"></main>
+</div>
+<div class="scrim" id="scrim" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+/* ============================================================
+   OUTSMARTING REALITY — COMPANION (Live / cloud edition)
+   Built from the book by Nero Knowledge. Part of Knowledge Athlete.
+   Auth + cloud sync via Firebase (shared Knowledge Athlete project).
+   Falls back to local-only mode automatically until you paste
+   your Firebase web config below.
+   ============================================================ */
+
+/* ▼▼▼ PASTE YOUR FIREBASE WEB CONFIG HERE (see DEPLOY-GUIDE) ▼▼▼
+   Firebase console ▸ Project settings ▸ General ▸ Your apps ▸ Web app ▸ SDK setup.
+   Every value here is safe to ship in the browser. */
+const CONFIG = {
+  apiKey:            "YOUR-FIREBASE-API-KEY",
+  authDomain:        "YOUR-PROJECT.firebaseapp.com",
+  projectId:         "YOUR-PROJECT-ID",
+  storageBucket:     "YOUR-PROJECT.appspot.com",
+  messagingSenderId: "YOUR-SENDER-ID",
+  appId:             "YOUR-APP-ID"
+};
+/* This app stores its data in the Firestore collection below, so it
+   coexists cleanly with your other Knowledge Athlete apps in the same project. */
+const DATA_COLLECTION = "outsmartingReality";
+/* ▲▲▲ Until the config is filled, the app runs in local-only mode. ▲▲▲ */
+
+const LEVELS = [
+  {n:1, key:"awareness", title:"Awareness", tag:"See the game you're in",
+   desc:"Wake up to the old frequency, the impartial universe, and the two Ms quietly running your reality."},
+  {n:2, key:"mastery", title:"Self-Mastery", tag:"Command yourself first",
+   desc:"You cannot command reality until you command you. Build discipline, self-trust, and the will to sacrifice the old."},
+  {n:3, key:"perception", title:"Perception & Belief", tag:"Rewrite the lens",
+   desc:"You don't see reality as it is, you see it as you are. Take back your perceptions, beliefs, and inherited 'truths'."},
+  {n:4, key:"creation", title:"Creation", tag:"Give yourself the reality",
+   desc:"The Technique, the law of having, the action sequence. Become the frequency of your desired reality, now."},
+  {n:5, key:"identity", title:"Identity & Emotion", tag:"Raise the ceiling",
+   desc:"Emotion is the language of the universe and self-worth is your ceiling. Master both to lift what you can hold."},
+  {n:6, key:"mastery6", title:"Integration & Mastery", tag:"Live it, embody it",
+   desc:"Heaven first, grace in the fall, and standing calm in the chaos. Make the principles your operating system."}
+];
+
+const LESSONS = [
+  /* ===== LEVEL 1 — AWARENESS ===== */
+  {id:"l1", lvl:1, title:"The Old Frequency", chapter:"The Old Frequency", mins:7,
+   principle:"Your old frequency is the only thing holding you back from your new reality.",
+   insight:"The version of you that wants to stay the same is a living entity built from repeated thoughts and emotions. Its single goal is to exist — and it will sabotage you to keep feeding on the emotions that made it.",
+   why:"Until you know how the old frequency thinks, you'll be one step behind it forever, mistaking its fear and reactivity for your own.",
+   model:{name:"The Doppelgänger", body:"Picture a spiritual twin built from thought-forms — stones piled by every repeated thought. It is Needy, Sadistic, Scared, and Reactive. Name its four moves and you stop obeying them."},
+   quote:{text:"All those times it felt like your life was spiralling out of control, it was always in your control — but in the control of your old frequency.", cite:"The Old Frequency"},
+   apps:["Catching self-sabotage right before a breakthrough","Noticing when 'your' fear of change is actually the old frequency's","Choosing response over reaction in conflict"],
+   behavior:"When adversity hits, pause and ask: am I about to live by default (react) or by design (respond)?",
+   prompts:["What emotion does your old frequency feed on most often?","Where in your life does it feel like something wants you to stay the same?","Recall the last time you self-sabotaged near a win. What was the trigger?"],
+   journal:["Describe your old frequency as a character. What does it want, and how does it get it?","Write three situations where you reacted when you could have responded."],
+   tool:"audit",
+   practice:"Today, catch one reaction and convert it to a response using: 'How would the version of me in my desired reality see this?'"},
+
+  {id:"l2", lvl:1, title:"Reality Doesn't Care If You're Nice", chapter:"Reality Doesn't Care If You're Nice", mins:6,
+   principle:"The universe rewards frequency, not morality.",
+   insight:"Fire, rain and gravity treat the good and the evil identically. Reality registers only your frequency — your state of consciousness — not whether you deserve better.",
+   why:"Moralising the universe ('I'm a good person, why me?') emits frustration, which the universe simply magnifies. You're playing the wrong game.",
+   model:{name:"The Impartial System", body:"The universe is a set of laws that operate indiscriminately. Stop asking 'do I deserve it?' and start asking 'have I matched the frequency of it?'"},
+   quote:{text:"He maketh his sun to rise on the evil and on the good, and sendeth rain on the just and on the unjust.", cite:"Matthew 5:45"},
+   apps:["Releasing resentment that life is 'unfair'","Separating being good from being aligned","Stopping the 'I deserve better' loop that keeps you stuck"],
+   behavior:"Replace every 'I deserve this' with 'I am becoming the frequency of this.'",
+   prompts:["Where are you waiting to be rewarded for being good instead of becoming aligned?","What would change if you stopped pleading your case to the universe?"],
+   journal:["List the places you secretly believe your goodness should have paid off. What frequency were you actually emitting there?"],
+   tool:"keys",
+   practice:"Notice one moment of 'this isn't fair' today and reframe it as a frequency question, not a justice question."},
+
+  {id:"l3", lvl:1, title:"The Mechanics of the Universe", chapter:"The Mechanics of the Universe", mins:7,
+   principle:"The universe magnifies, then maintains, whatever frequency you emit.",
+   insight:"The two Ms: it Magnifies your dominant emotional state using people and events, then Maintains it for the sake of equilibrium. This is why the rich get richer and the stuck stay stuck.",
+   why:"You can't break the cycle — you can only switch cycles. Awareness of what's being magnified is the prerequisite to changing it.",
+   model:{name:"The Two Ms", body:"Magnify + Maintain. Identify your base emotional state, find its energetic opposite (the complementary polarity), and feed evidence of that opposite until momentum flips."},
+   quote:{text:"Consistency is a form of alchemy. It takes a single vibration and gives it enough momentum to become a frequency that then becomes a reality.", cite:"The Mechanics of the Universe"},
+   apps:["Diagnosing your daily baseline mood","Flipping a recurring negative state to its polarity","Building positive momentum deliberately"],
+   behavior:"Each morning, name your base mood and consciously choose the polarity you'll feed today.",
+   prompts:["What is your honest day-to-day emotional baseline?","What is its exact energetic opposite?","Where in your life does that opposite already quietly exist?"],
+   journal:["Name the feeling being magnified in your life right now. Then list five moments — big or small — that prove its opposite is also true."],
+   tool:"audit",
+   practice:"Pick today's dominant feeling, define its opposite, and collect three pieces of evidence the opposite is real for you."},
+
+  {id:"l4", lvl:1, title:"You Can't Outrun Your Frequency", chapter:"You Can't Outrun Your Frequency", mins:8,
+   principle:"Manifestation requires alignment across all three planes: mental, spiritual, physical.",
+   insight:"Reality is the realm of effect — smoke, not fire. You cannot change an effect with another effect. The cause lives on the mental plane; action (physical) must come last.",
+   why:"Most people are 'physical planers' grinding away, or 'mental planers' just wishing. Full-spectrum alignment — mind, then spirit, then body — is non-negotiable.",
+   model:{name:"Order of Alignment", body:"1) Mental: hold the desire as already real. 2) Spiritual: recognise the infinite within you. 3) Physical: act on the nudges that follow. The mirror never smiles before you do."},
+   quote:{text:"You don't create reality. How could you? Everything already exists. You just need to choose.", cite:"You Can't Outrun Your Frequency"},
+   apps:["Stopping the burnout of action-without-alignment","Sequencing inner work before outer effort","Trusting the blueprint that arrives after alignment"],
+   behavior:"Before any major action, align mentally and spiritually first — then move.",
+   prompts:["Which plane do you over-rely on: hard work, wishful thinking, or prayer alone?","What would 'beginning at the end' look like this week?"],
+   journal:["Where are you trying to change an effect with another effect? What's the actual cause underneath it?"],
+   tool:"keys",
+   practice:"Take one goal. Write how the already-arrived version of you thinks and feels — before you do a single physical task on it."},
+
+  /* ===== LEVEL 2 — SELF-MASTERY ===== */
+  {id:"l5", lvl:2, title:"The First Step to Mastering Reality", chapter:"The First Step to Mastering Reality", mins:7,
+   principle:"You cannot master reality until you master yourself.",
+   insight:"Self-mastery is simply the ability to follow through on your own conscious commands. The mind keeps score: every kept word is an ATFT (ability to follow through), every broken one an ITFT.",
+   why:"The more ITFTs you collect, the less your mind — and so the universe — trusts you, and the harder materialisation becomes. Establish your word as law.",
+   model:{name:"Word as Law", body:"Be your own dictator. When you say you'll do something, it becomes non-negotiable. The task itself is irrelevant — what matters is the act of consciously directing yourself."},
+   quote:{text:"How can you expect to command the universe if you can't even command yourself?", cite:"The First Step to Mastering Reality"},
+   apps:["Keeping small promises to yourself","Choosing your own word over others' demands","Building the discipline that powers manifestation"],
+   behavior:"Make one promise to yourself each day and keep it — no ifs, buts, or maybes.",
+   prompts:["Where do you establish others' word as law instead of your own?","What have you been putting off that is quietly eroding your self-trust?"],
+   journal:["List everything you've been putting off. Choose three to convert into kept promises this week."],
+   tool:"ledger",
+   practice:"Pick one tiny command (wake time, a message, a task) and execute it swiftly. Log it as an ATFT."},
+
+  {id:"l6", lvl:2, title:"Sacrifice or Pay the Universe Interest", chapter:"Sacrifice or Pay the Universe Interest", mins:7,
+   principle:"To receive a new reality you must sacrifice the current one.",
+   insight:"Frequency compounds like interest — it becomes your greatest ally or worst enemy. The most addictive substance in the universe isn't a drug; it's frequency. That's why change feels uncomfortable even when it's better.",
+   why:"You can't sit in two chairs. Until you sacrifice the old frequency — its beliefs, comforts, even people — there is no space for the new.",
+   model:{name:"Sacrifice = Exchange", body:"Nothing comes from nothing. The caterpillar gives up its identity to become the butterfly. What you exchange is frequency: the old you for the new reality."},
+   quote:{text:"You must be willing to give up everything you've been for what you could be.", cite:"Sacrifice or Pay the Universe Interest"},
+   apps:["Naming what the old reality costs you","Letting go of comforts that keep you stuck","Identifying the frequency you're addicted to"],
+   behavior:"Identify one comfort tied to your old frequency and consciously release it this week.",
+   prompts:["What frequency are you addicted to?","What would you have to give up — people, comforts, identities — to hold the new reality?"],
+   journal:["Write your 'exchange contract': what old frequency you're sacrificing and what reality you're exchanging it for."],
+   tool:"belief",
+   practice:"Name one piece of the old frequency you'll stop feeding today. Notice the discomfort — that's the addiction releasing."},
+
+  {id:"l7", lvl:2, title:"There's No Creation Without Conviction", chapter:"There's No Creation Without Conviction", mins:8,
+   principle:"Conviction — knowing, not believing — is the fuel of all creation.",
+   insight:"Belief implies the possibility of being wrong; conviction is knowing the way you know a light switch will work. Conviction is built in two stages: first self-trust, then expectation. Expectancy creates reality.",
+   why:"Without conviction, no technique works. And conviction starts with self-trust — doing what you said you'd do — which fills the reserve that becomes knowing.",
+   model:{name:"The Two-Stage Reserve", body:"Self-trust (keep your word) → fills the reserve → released as conviction. Then exercise the conviction muscle: decide you KNOW it's done, rather than waiting for the feeling to arrive."},
+   quote:{text:"You don't believe; you know. True faith is knowing.", cite:"There's No Creation Without Conviction"},
+   apps:["Turning 'I hope' into 'I know'","Using past 'I knew it' moments as proof of your creative power","Digging your ditches — preparing before the evidence"],
+   behavior:"Each day, declare one thing you KNOW will happen — and prepare for it as if it's certain.",
+   prompts:["Recall a time you just KNEW something would happen, and it did. What did that knowing feel like?","Where are you 'believing' when you could be 'knowing'?"],
+   journal:["Write the conviction statement for your desired reality as a known fact, in present tense, with total certainty."],
+   tool:"ledger",
+   practice:"Exercise the conviction muscle: pick one outcome and state, with precision, that you know it is already yours."},
+
+  /* ===== LEVEL 3 — PERCEPTION & BELIEF ===== */
+  {id:"l8", lvl:3, title:"The Perception Projection Loop", chapter:"The Perception Projection Loop", mins:6,
+   principle:"The way you look at reality is the way reality looks back at you.",
+   insight:"Perception is a belief based on how things seem — and once accepted, it projects itself as your reality. People take a dim view, project the worst, then champion the worst as 'truth', reinforcing the loop.",
+   why:"You don't see the world as it is; you see it as you are. Control your perception, or the world will control it for you.",
+   model:{name:"Perception → Projection", body:"Your lens shapes your reality. So look at every condition, event and person through the lens of your desired reality: 'If the version of me in my desired reality jumped into my body, how would it see this?'"},
+   quote:{text:"What you stare into is staring back at you and eventually will become you.", cite:"The Perception Projection Loop"},
+   apps:["Reframing a 'bad' situation through your future lens","Breaking the dating/work cycle of being 'proven right'","Catching the worst-case lens before it projects"],
+   behavior:"Run every significant event through the desired-reality lens before you conclude what it 'means'.",
+   prompts:["Where is your need to be 'right' sabotaging the reality you actually want?","What lens have you been viewing your life through?"],
+   journal:["Take one recurring frustration. Describe it twice: once through the old lens, once through your desired-reality lens."],
+   tool:"coach",
+   practice:"Apply the lens to one event today: how would the future you perceive it?"},
+
+  {id:"l9", lvl:3, title:"You Don't Have Beliefs, They Have You", chapter:"You Don't Have Beliefs, They Have You", mins:8,
+   principle:"All beliefs are choices — and changing one is simply deciding to believe something else.",
+   insight:"A belief is a thought charged with emotion and conviction. Beliefs behave like entities that defend themselves with emotion and pretend to be unchangeable 'truths'. The trick: when you believe a belief is unchangeable, it becomes so.",
+   why:"More important than what you believe is your belief about beliefs. Decide that no belief is unmovable, and the clay of your mind softens for moulding.",
+   model:{name:"Beliefs as Entities", body:"Beliefs come from Experience or Adoption. They release emotion when threatened so you back off. Hit a nerve = you found the belief. Then consciously choose the belief your desired reality requires."},
+   quote:{text:"Changing a belief is simply making the conscious decision to believe something else. There's nothing more to it.", cite:"You Don't Have Beliefs, They Have You"},
+   apps:["Spotting an adopted belief inherited from family","Disarming a belief by noticing the emotion guarding it","Installing the beliefs your desired reality requires"],
+   behavior:"When emotion flares defending a 'truth', name it as a belief — then ask if it's yours and if it serves you.",
+   prompts:["If you were living your desired reality, what would you believe to be true about the world?","Which of your strongest 'truths' were adopted, not experienced?"],
+   journal:["Pick one limiting belief. Trace its origin (experience or adoption), then write the replacement belief your desired reality needs."],
+   tool:"belief",
+   practice:"Catch one belief defending itself with emotion today. Decide, consciously, to believe its empowering opposite."},
+
+  {id:"l10", lvl:3, title:"Transcend the Collective", chapter:"Transcend the Collective", mins:7,
+   principle:"To inherit the beliefs of the collective is to inherit its limitations.",
+   insight:"Society is a hive-mind that seeks equilibrium through conformity. Collective 'truths' are Trojan horses — logical, sensible, and useless to you. To be an exception in reality, you must be an exception mentally.",
+   why:"You can't hold the same frequency as everyone around you and expect a different reality. What you and your peers deem impossible becomes your shared ceiling.",
+   model:{name:"The Hive-Mind Filter", body:"Identify the collective beliefs surrounding your desired reality, name them clearly, and consciously detach. Make the irrational rational; make the impossible possible — first in the mind."},
+   quote:{text:"To make the impossible, possible, it must first be made possible in the mind.", cite:"Transcend the Collective"},
+   apps:["Leaving behind 'realistic' as a badge of limitation","Building your own bubble around your desired reality","Naming the consensus 'truths' that cap your potential"],
+   behavior:"Filter out one piece of collective limitation each day; refuse to resell it to yourself.",
+   prompts:["What 'common sense' truths surround your desired reality?","Which of those serve you — and which just keep you under the umbrella?"],
+   journal:["List the collective beliefs around what you want. For each, write whether you choose to keep it or detach from it."],
+   tool:"belief",
+   practice:"Identify one 'realistic' belief you've been reselling yourself and consciously set it down today."},
+
+  /* ===== LEVEL 4 — CREATION ===== */
+  {id:"l11", lvl:4, title:"Redefining Manifestation — The Technique", chapter:"Redefining Manifestation", mins:10,
+   principle:"Manifestation is internally shifting until you're no longer emotionally dependent on seeing reality change.",
+   insight:"Your frequency is the sum of seven keys: Beliefs, Conviction, Perception, Emotionally-charged thoughts, Focus, Reactions, Expectations. The Technique uses vivid, emotionally-intense inner experience to convince the mind your desired reality is already real.",
+   why:"Techniques don't create reality — conviction does. The Technique's job is to shift you internally so completely that you take the desired reality for granted, collapsing the importance that repels it.",
+   model:{name:"The Technique", body:"Part 1: a short, vivid, looping scene where someone who cares acknowledges your desire fulfilled — with touch and real emotion. Part 2: a single authentic sentence you'd say, repeated through the day with feeling. Manifestation isn't creation; it's revelation."},
+   quote:{text:"You are revealing what already exists within. Manifestation isn't creation; it is revelation.", cite:"Redefining Manifestation"},
+   apps:["Preparing for an interview, date, or hard conversation","Shifting into the frequency of a desired reality","Rewriting the grip of a painful past event"],
+   behavior:"Run The Technique daily — Part 1 in stillness, Part 2 woven through your day — without making it a chore.",
+   prompts:["What exactly do you want, with pinpoint clarity?","Who in your life would naturally comment on it, and what would they say?","What's the one authentic sentence you'd think the moment it's real?"],
+   journal:["Draft your full Technique: the scene, the person, the touch, the emotion, and your one-line affirmation."],
+   tool:"technique",
+   practice:"Build and run your Technique once today using the Technique Builder."},
+
+  {id:"l12", lvl:4, title:"The Desire of Your Desires", chapter:"The Desire of Your Desires", mins:7,
+   principle:"You don't want the thing — you want the internal state you believe it would give you.",
+   insight:"Every desire is a feeling in disguise. You don't want the house, money or person; you want to feel secure, free, seen, cherished. All we ever want is a frequency we believe we're missing.",
+   why:"You can't detach from what you think is the world itself. Once you realise you want the feeling, you can give it to yourself now — which collapses the wanting that repels it.",
+   model:{name:"Desire Beneath the Desire", body:"For anything you want, ask: 'how would having it make me feel?' That feeling is the real target. Give yourself the frequency internally and the external loses its grip."},
+   quote:{text:"You think getting what you want will make you feel a certain way, without realising that feeling that way will get you what you want.", cite:"The Desire of Your Desires"},
+   apps:["Decoding what a craving is really about","Practising true detachment by feeding the feeling now","Naming the frequency behind a goal"],
+   behavior:"Translate every desire into its underlying feeling before you chase it.",
+   prompts:["Take your biggest desire. What feeling do you believe it will give you?","How could you source a drop of that feeling for yourself today?"],
+   journal:["For each major desire, write the feeling beneath it. Then write one way to give yourself that feeling now."],
+   tool:"technique",
+   practice:"Name the feeling under your top desire and deliberately generate it internally for two minutes."},
+
+  {id:"l13", lvl:4, title:"The Annoying Law of the Universe", chapter:"The Annoying Law of the Universe", mins:7,
+   principle:"You can only have what you already have — by the universe's definition, not the human one.",
+   insight:"Wanting confesses lack and signals importance — and importance is energetic space between you and the desire. The secret frequency of not-needing is what makes a desired reality chase you.",
+   why:"To the universe, obsession is repulsion and desperation is disrespect. The less you need it, the smaller the gap; the more you can take it for granted, the closer it comes.",
+   model:{name:"Wanting vs Having", body:"Two chairs: wanting (lack) and having (frequency). Become a source of what you seek — tip, give love, give appreciation — and look at your desired reality as already-owned and unremarkable."},
+   quote:{text:"To the universe, obsession is repulsion. To the universe, desperation is disrespect.", cite:"The Annoying Law of the Universe"},
+   apps:["Neutralising a desire you've been gripping","Becoming a source instead of a seeker","Noticing what flows to you when you don't need it"],
+   behavior:"Be a source of what you want — give it freely — and treat the desire as already normal.",
+   prompts:["What comes to you effortlessly when you don't need it? What does that teach you?","How could you become a source of what you're seeking?"],
+   journal:["Write your desired reality as something you already own and barely think about. Notice the shift in charge."],
+   tool:"audit",
+   practice:"Give freely today what you most want to receive — money, love, appreciation, or attention."},
+
+  {id:"l14", lvl:4, title:"How to Know Exactly What Action to Take", chapter:"How to Know Exactly What Action to Take", mins:8,
+   principle:"Frequency first, action after.",
+   insight:"Action originates from a sequence: Consciousness/Frequency → Intuition → Mental Nudges → Action → Reality. Wrong frequency with right action still produces the wrong reality. You cannot outhustle your frequency.",
+   why:"Align your frequency and the right intuition downloads, producing nudges from your desired-reality self. Then self-trust determines whether you execute fast enough to compound them.",
+   model:{name:"The Multi-Dimensional Sequence", body:"Tune to the frequency of your desired reality, listen for nudges (apply, reach out, pivot, start), and act swiftly. Procrastination is energy stagnating against a contradictory frequency."},
+   quote:{text:"You cannot and will not outhustle your frequency. Frequency first, action after.", cite:"How to Know Exactly What Action to Take"},
+   apps:["Acting on intuitive nudges instead of forcing","Diagnosing procrastination as misalignment","Trusting yourself enough to execute the download"],
+   behavior:"Tune your frequency before acting, then execute the very next nudge without delay.",
+   prompts:["What nudge have you been ignoring that your aligned self would act on?","Where is procrastination revealing a frequency-action mismatch?"],
+   journal:["From the frequency of your desired reality, ask: what is the next small action I'm being nudged toward? Write it and a deadline."],
+   tool:"ledger",
+   practice:"Capture one mental nudge today and act on it within the hour. Speed signals self-trust."},
+
+  {id:"l15", lvl:4, title:"Attention Beats Intention", chapter:"Attention Beats Intention", mins:6,
+   principle:"Reality responds to your dominant concentration, not your desire.",
+   insight:"Concentration is a centralisation of energy — a form of creation. What you focus on (directly, or through what resonates, implies, or reflects it) you feed into being. Attention is alignment.",
+   why:"It doesn't matter how much you want success; if your attention is on failure, that's the frequency you align with. You can undo your alignment with one misdirection of focus.",
+   model:{name:"Attention as Alignment", body:"Concentration is the water; what you focus on grows. Become aware of which polarity — desired or unwanted — you're feeding, and redirect attention the moment it drifts."},
+   quote:{text:"Reality doesn't respond to your desires; it responds to your dominant concentration.", cite:"Attention Beats Intention"},
+   apps:["Catching attention drifting to lack","Feeding the desired polarity with focus","Auditing where your attention actually goes"],
+   behavior:"Audit your attention; redirect from the unwanted polarity to the desired one whenever you notice the drift.",
+   prompts:["What have you been concentrating on — what you want, or what you fear?","What would change if your attention matched your intention?"],
+   journal:["Track your attention for one day. Where did it go? What were you unknowingly feeding?"],
+   tool:"audit",
+   practice:"Three times today, notice where your attention is and consciously move it to your desired reality."},
+
+  /* ===== LEVEL 5 — IDENTITY & EMOTION ===== */
+  {id:"l16", lvl:5, title:"The Law of Emotion", chapter:"The Law of Emotion", mins:9,
+   principle:"Emotion is the language of the subconscious — and of the universe.",
+   insight:"Emotion is the largest shareholder of your frequency. Affirmations, visualisations and vision boards without emotion are dead. Negative emotions aren't the enemy — they're signposts. Resisted, they persist.",
+   why:"Whoever controls your emotion controls your reality. Emotional alchemy lets you feel a negative fully, reach neutrality, and extract the hidden seed of your desired reality from within the adversity.",
+   model:{name:"Emotional Alchemy", body:"Relax → bring the adversity to mind → feel it fully → stay until it shifts → reach neutrality → extract the seed → feel the shift → integrate. Stillness is the only solution to turbulence."},
+   quote:{text:"What you resist persists. When emotions are fully felt without resistance, they dissolve into pure awareness.", cite:"The Law of Emotion"},
+   apps:["Processing a painful event without repressing it","Charging your practice with real emotion","Finding the hidden gift inside adversity"],
+   behavior:"When a negative emotion arises, run emotional alchemy instead of resisting or repressing it.",
+   prompts:["What emotion have you been resisting or bottling?","If this adversity carried a hidden seed for your desired reality, what might it be?"],
+   journal:["Describe an adversity. Feel it on the page. Then write the seed inside it that serves your desired reality."],
+   tool:"alchemy",
+   practice:"Run one cycle of Emotional Alchemy on a current charge using the guided tool."},
+
+  {id:"l17", lvl:5, title:"The Energetic Ceiling on Your Reality", chapter:"The Energetic Ceiling on Your Reality", mins:8,
+   principle:"Self-worth is the ceiling on everything you can materialise.",
+   insight:"You don't rise to your desires; you fall to your self-worth. The universe gives you what you KNOW you deserve — and knowing is set by your most emotionally intense experiences, not by belief.",
+   why:"You can believe you deserve wealth, but if your subconscious only knows scarcity (through intense experience), scarcity materialises. Self-worth tied to others or to wins/losses is anchored to an illusion.",
+   model:{name:"Knowing > Believing", body:"Because the mind can't tell real from vividly imagined, cultivate an internally intense experience of being worthy, loved, validated — overwriting what you 'know', which lifts the ceiling. See everything as a win; refuse the duality of success/failure."},
+   quote:{text:"You do not rise to the heights of your desires; you fall to your level of self-worth.", cite:"The Energetic Ceiling on Your Reality"},
+   apps:["Detaching self-worth from others' approval","Refusing the win/loss rollercoaster","Internally cultivating the experience of being worthy"],
+   behavior:"Source validation from within daily, and relabel every 'loss' as a win in disguise.",
+   prompts:["Where is your self-worth dependent on others' approval or on outcomes?","What would you do if you KNEW you were worthy of your desired reality?"],
+   journal:["Write the emotionally intense inner scene where you are deeply validated and worthy. Make it vivid enough to feel real."],
+   tool:"technique",
+   practice:"Use The Technique to generate an intense internal experience of being worthy and validated."},
+
+  {id:"l18", lvl:5, title:"Prepare to Be Bad", chapter:"Prepare To Be Bad", mins:8,
+   principle:"Your need to be a 'good' person can keep you in a bad reality.",
+   insight:"A 'good person' is often just someone who conforms — relatable, humble, self-sacrificing, knowing their place. Those traits oppose what materialising your desired reality requires. You signed a social contract on three levels: evolutionary, social, energetic.",
+   why:"The contract enforces conformity through self-sabotage and guilt. To rise, you must accept being seen as different — hated, rejected, or disapproved of to some degree — without dimming your light.",
+   model:{name:"Break the Social Contract", body:"Two moves: (1) Unapologetic acceptance — stop merging success with guilt. (2) Make peace with being different. Make peace with difference and you find peace in it; create chaos around it and you find chaos."},
+   quote:{text:"Have you worked this hard to stay the same? Make peace with being different, and you will find peace in difference.", cite:"Prepare To Be Bad"},
+   apps:["Releasing guilt around outgrowing your circle","Letting yourself be 'too much' for your old reality","Prioritising your frequency without apology"],
+   behavior:"Notice where you dim yourself to keep others comfortable — and stop dimming.",
+   prompts:["Where do you shrink to keep others comfortable?","If their approval is conditional on you staying small, is it really love?"],
+   journal:["Write the ways you've been keeping yourself 'good' (small). What would unapologetic acceptance look like?"],
+   tool:"coach",
+   practice:"Take one action today that your desired-reality self would take, even if it makes you less 'relatable'."},
+
+  /* ===== LEVEL 6 — INTEGRATION & MASTERY ===== */
+  {id:"l19", lvl:6, title:"On Earth, as it is in Heaven", chapter:"On Earth, as it is in Heaven", mins:6,
+   principle:"No heaven, no manifestation — you must live in heaven first.",
+   insight:"Most people try to materialise a desired reality while living, internally, in hell — a frequency in direct opposition to what they want. You can only ever be where you are.",
+   why:"Heaven here is metaphysical: the internal state that matches your desired reality. Enter it now, internally, and the outer follows.",
+   model:{name:"Heaven First", body:"Before the world can reflect your desired reality, you must already be living in its frequency internally. Treat your current life as your dream life until it becomes it."},
+   quote:{text:"You will not materialise your desired reality until you live in heaven.", cite:"On Earth, as it is in Heaven"},
+   apps:["Building a daily internal 'heaven' baseline","Treating now as already-arrived","Refusing to wait for proof to feel good"],
+   behavior:"Spend a few minutes daily in the internal state of your desired reality — heaven first.",
+   prompts:["What does your internal 'heaven' feel like?","Where are you postponing that feeling until reality proves it?"],
+   journal:["Describe a day lived entirely from the frequency of your desired reality. How does heaven feel from the inside?"],
+   tool:"technique",
+   practice:"Begin your day from 'heaven': two minutes embodying the state of your desired reality before anything else."},
+
+  {id:"l20", lvl:6, title:"What to Do When Reality Goes Wrong", chapter:"What to Do When Reality Goes Wrong", mins:9,
+   principle:"Nothing can truly go wrong; there are no detours unless you create them.",
+   insight:"Frequencies oscillate up and down — the Law of Rhythm. Falling back is normal; you only return to square one if you decide you do. Guilt and frustration are the glue that binds you to the old frequency.",
+   why:"Four moves keep your frequency intact: give yourself grace, transcend the label 'wrong', alter how you look at life, and stand calmly among the chaos. The waves outside are stilled by stillness within.",
+   model:{name:"The Four Returns", body:"1) Grace — you only fell because you rose; feed past wins, not the fall. 2) Transcend 'wrong' — all paths lead to one place. 3) Re-perceive — see going wrong as going right. 4) Stand calm — the chaos borrows its power from you; reclaim it as peace."},
+   quote:{text:"The only reason you've fallen is because you've risen. The waves outside of you can only be brought to stillness by the stillness inside of you.", cite:"What to Do When Reality Goes Wrong"},
+   apps:["Recovering fast after a slip","Refusing the 'back to square one' story","Staying centred in a storm"],
+   behavior:"When reality feels wrong, run the four returns instead of spiralling.",
+   prompts:["When things go 'wrong', what story do you tell — and what does it feed?","What past rise can you focus on right now to reclaim your frequency?"],
+   journal:["Recall a recent slip. Re-write it through the four returns: grace, no 'wrong', re-perception, and inner calm."],
+   tool:"alchemy",
+   practice:"Next time reality dips, focus only on a past rise for two minutes before doing anything else."},
+
+  {id:"l21", lvl:6, title:"Become the Source — The Outro", chapter:"Outro", mins:5,
+   principle:"It is you. It has only ever been you.",
+   insight:"Causality never lived in money, strategy, people, timing or opportunity — those are effects, shadows cast by your consciousness. To worship them is to hand over your throne.",
+   why:"Integration means remembering more often: returning to your knowing, to the frequency of having, to yourself. It's not about being perfect — it's about coming back.",
+   model:{name:"The Operating System", body:"Consciousness is the only cause. When you stop chasing shadows and stand as the source, money flows, relationships align, success unfolds — not because they gave you anything, but because you stopped giving them your power."},
+   quote:{text:"It's never about what's going to happen — it's about who you're going to be when it does.", cite:"Outro"},
+   apps:["Returning to yourself after forgetting","Refusing to make idols of effects","Living as the source, not the seeker"],
+   behavior:"When you notice you've handed your power to an external 'cause', return to yourself.",
+   prompts:["Where have you been worshipping an effect as if it were the cause?","What would change if you fully stood as the source?"],
+   journal:["Write your own closing creed: who you are choosing to be, regardless of what reality shows you."],
+   tool:"coach",
+   practice:"Catch one moment today where you blame an external cause, and return power to yourself."}
+];
+
+const TOOLS = [
+  {id:"technique", icon:"&#10024;", name:"The Technique Builder", tagline:"Build & run the core manifestation practice",
+   blurb:"Construct your vivid Part 1 scene and Part 2 affirmation, then run a guided session that shifts you into the frequency of your desired reality."},
+  {id:"alchemy", icon:"&#9851;", name:"Emotional Alchemy", tagline:"Transmute a charge into its hidden seed",
+   blurb:"A guided 8-step process to feel a negative emotion fully, reach neutrality, and extract the seed of your desired reality from within it."},
+  {id:"ledger", icon:"&#9878;", name:"Self-Trust Ledger", tagline:"Build conviction by keeping your word",
+   blurb:"Log the promises you keep (ATFT) and break (ITFT). Watch your self-trust reserve — the fuel of conviction — fill in real time."},
+  {id:"belief", icon:"&#9728;", name:"Belief Rewriter", tagline:"Disarm a belief and install a new one",
+   blurb:"Surface a limiting belief, trace its origin, find the emotion guarding it, and consciously choose the belief your desired reality requires."},
+  {id:"audit", icon:"&#128301;", name:"Frequency Audit", tagline:"Diagnose your base state and flip the polarity",
+   blurb:"Score your baseline across life areas, reveal what's being magnified, and get the exact complementary polarity to feed instead."},
+  {id:"keys", icon:"&#128273;", name:"7 Keys Alignment", tagline:"Measure your Reality Alignment Score",
+   blurb:"Rate the seven keys of frequency for a chosen desired reality. See your alignment score and the weakest key quietly contradicting you."}
+];
+
+const PRACTICES = [
+  {id:"p2", mins:2, name:"The Return", tag:"2-minute reset",
+   desc:"A fast re-alignment to your desired-reality frequency.",
+   steps:["Close your eyes and take three slow breaths.","Recall one past 'rise' — a moment you felt powerful.","Say your Part 2 affirmation once, and feel it.","Open your eyes carrying that frequency."]},
+  {id:"p5", mins:5, name:"Heaven First", tag:"5-minute embodiment",
+   desc:"Begin the day already living in the frequency of what you want.",
+   steps:["Sit and relax until your body feels loose and heavy.","Step into the internal state of your desired reality.","Run your Part 1 scene once, vividly, with emotion.","Name the feeling and let it settle.","Carry it into your first action of the day."]},
+  {id:"p10", mins:10, name:"Alignment Sit", tag:"10-minute deepening",
+   desc:"Stillness, the Technique, and a self-trust commitment.",
+   steps:["Five minutes of stillness — let the ego's restlessness pass.","Run your Part 1 scene on a gentle loop.","Drop into the emotion until it feels real.","Ask: what is the next nudge toward my desired reality?","Make one concrete commitment and log it in the Ledger."]},
+  {id:"pd", mins:25, name:"Deep Work", tag:"Deep integration",
+   desc:"A full alchemy + technique + conviction session.",
+   steps:["Run a full Emotional Alchemy cycle on any current charge.","Reach neutrality, then extract the seed.","Run your Technique Part 1 with full immersion.","Exercise the conviction muscle: declare what you KNOW.","Capture nudges and convert them into kept commitments.","Close by writing one line in your journal."]}
+];
+
+const CHALLENGES = [
+  {id:"c7", days:7, name:"Awareness Sprint", focus:"Catch the old frequency",
+   desc:"Seven days of noticing reactions and converting them to responses. Build the awareness everything else rests on.",
+   daily:"Catch one reaction today and convert it to a response. Log it."},
+  {id:"c14", days:14, name:"Self-Trust Build", focus:"Establish your word as law",
+   desc:"Two weeks of keeping one conscious commitment a day. Fill the self-trust reserve that becomes conviction.",
+   daily:"Make one promise to yourself and keep it. Record it as an ATFT."},
+  {id:"c30", days:30, name:"The Technique Month", focus:"Become the frequency",
+   desc:"Thirty days running The Technique — Part 1 in stillness, Part 2 through the day. Build serious manifestation muscle.",
+   daily:"Run Part 1 once and weave Part 2 through your day, without making it a chore."},
+  {id:"c90", days:90, name:"Reality Mastery", focus:"Live the operating system",
+   desc:"Ninety days integrating all six levels — heaven first, alignment, alchemy, grace. Embody the principles until they're default.",
+   daily:"Begin from heaven, act on one nudge, and run the four returns whenever reality dips."}
+];
+
+const ACHIEVEMENTS = [
+  {id:"first_step", em:"&#127793;", nm:"First Step", ds:"Complete your first lesson", test:s=>s.done.length>=1},
+  {id:"awakened", em:"&#128064;", nm:"Awakened", ds:"Finish Level 1: Awareness", test:s=>lvlDone(s,1)},
+  {id:"self_master", em:"&#9878;", nm:"Self-Master", ds:"Finish Level 2: Self-Mastery", test:s=>lvlDone(s,2)},
+  {id:"lens", em:"&#128301;", nm:"New Lens", ds:"Finish Level 3: Perception & Belief", test:s=>lvlDone(s,3)},
+  {id:"creator", em:"&#10024;", nm:"Creator", ds:"Finish Level 4: Creation", test:s=>lvlDone(s,4)},
+  {id:"ceiling", em:"&#128081;", nm:"Ceiling Lifted", ds:"Finish Level 5: Identity & Emotion", test:s=>lvlDone(s,5)},
+  {id:"source", em:"&#127775;", nm:"The Source", ds:"Finish Level 6 & the whole journey", test:s=>lvlDone(s,6)},
+  {id:"technique5", em:"&#128302;", nm:"Muscle Built", ds:"Run The Technique 5 times", test:s=>(s.counters.technique||0)>=5},
+  {id:"alchemy3", em:"&#9851;", nm:"Alchemist", ds:"Complete Emotional Alchemy 3 times", test:s=>(s.counters.alchemy||0)>=3},
+  {id:"trust10", em:"&#128170;", nm:"Word as Law", ds:"Log 10 kept commitments", test:s=>s.ledger.filter(x=>x.status==='kept').length>=10},
+  {id:"streak7", em:"&#128293;", nm:"Seven-Day Flame", ds:"Reach a 7-day streak", test:s=>s.streak>=7},
+  {id:"journal5", em:"&#128221;", nm:"Reflective", ds:"Write 5 journal entries", test:s=>s.journal.length>=5},
+  {id:"belief5", em:"&#9728;", nm:"Belief Bender", ds:"Rewrite 5 beliefs", test:s=>s.beliefs.length>=5},
+  {id:"challenge", em:"&#127942;", nm:"Committed", ds:"Complete a mastery challenge", test:s=>Object.values(s.challenges||{}).some(c=>c.complete)}
+];
+
+const COACH = [
+  "What assumption are you treating as reality right now?",
+  "What evidence supports this belief? What evidence contradicts it?",
+  "What would the version of you in your desired reality believe about this?",
+  "Are you living by default (reacting) or by design (responding) today?",
+  "What frequency are you addicted to — and is it the one you want?",
+  "What feeling do you think your desire will give you? Could you give yourself a drop of it now?",
+  "Where are you trying to change an effect with another effect?",
+  "What is being magnified in your life right now? What's its opposite?",
+  "What have you been putting off that is quietly eroding your self-trust?",
+  "What do you KNOW will happen — not hope, know?",
+  "Whose word are you establishing as law instead of your own?",
+  "Where is your need to be 'right' sabotaging what you actually want?",
+  "What belief is defending itself with emotion right now?",
+  "What 'realistic' truth have you been reselling yourself?",
+  "Where are you dimming your light to keep others comfortable?",
+  "If you knew you were worthy of your desired reality, what would you do next?",
+  "What nudge have you been ignoring that your aligned self would act on?",
+  "Where has your attention actually been — on what you want, or what you fear?",
+  "What past 'rise' can you focus on to reclaim your frequency right now?",
+  "Where have you handed your power to an external cause?",
+  "What would 'beginning at the end' look like for your goal this week?",
+  "What are you making important — and is that importance creating distance?"
+];
+
+const TOP10 = {
+  concepts:["Frequency over morality — reality reflects state, not virtue","The Old Frequency as a living entity","The Two Ms: Magnify & Maintain","The 7 Keys to Frequency","Wanting vs Having (the secret frequency of not-needing)","Conviction = knowing, not believing","Emotion is the language of the universe","Self-worth is your energetic ceiling","Frequency first, action after","Manifestation is revelation, not creation"],
+  exercises:["The Technique (Part 1 scene + Part 2 affirmation)","Emotional Alchemy (8 steps)","Self-Trust Ledger (ATFT/ITFT)","Polarity flip (Two Ms practice)","Belief origin trace & rewrite","7 Keys alignment scan","Desired-reality lens reframe","Become-a-source giving","Conviction muscle declaration","Heaven-first morning embodiment"],
+  behaviors:["Respond instead of react","Establish your word as law","Keep one daily promise to yourself","Act on nudges within the hour","Give freely what you want to receive","Audit and redirect your attention","Stop dimming your light","Source validation from within","Relabel every loss as a win","Return to yourself when you forget"],
+  models:["The Doppelgänger (old frequency)","The Impartial System","The Multi-Dimensional Sequence","Wanting vs Having (two chairs)","Beliefs as Entities","Knowing > Believing","Attention as Alignment","The Two-Stage Reserve (self-trust → conviction)","Heaven First","Consciousness as the only cause"],
+  journals:["Describe your old frequency as a character — what it wants and how it gets it","Name the feeling being magnified, then list five proofs of its opposite","Write your exchange contract: old frequency out, new reality in","Trace one limiting belief's origin and write its replacement","Draft your full Technique scene and affirmation","Write the feeling beneath each desire and how to give it now","Describe a day lived entirely from your desired reality","Write the vivid scene where you are deeply worthy and validated","Re-write a recent slip through the four returns","Write your closing creed: who you choose to be regardless of reality"],
+  questions:["What assumption are you treating as reality?","What would your future self believe about this?","Are you living by default or by design?","What frequency are you addicted to?","What feeling is your desire really about?","What do you KNOW will happen?","Whose word are you making law instead of your own?","What belief is defending itself with emotion?","Where are you dimming your light?","Where have you handed your power to an external cause?"]
+};
+
+/* ============ STATE ENGINE ============ */
+const KEY="or_companion_v1";
+const DEFAULT={
+  name:"", desire:"", done:[], streak:0, bestStreak:0, lastActive:"", points:0,
+  ledger:[], beliefs:[], journal:[], audits:[], keys:null,
+  technique:{desire:"",person:"",comment:"",touch:"",feeling:"",affirmation:""},
+  counters:{}, challenges:{}, achievements:[], seenIntro:false, coachIdx:0, lastSeed:""
+};
+/* ---- cloud + cache config (Firebase) ---- */
+const LOCAL_MODE = !CONFIG.apiKey || CONFIG.apiKey.indexOf("YOUR-")>=0 || !CONFIG.projectId || CONFIG.projectId.indexOf("YOUR-")>=0;
+let fbAuth=null, fbDb=null, CURRENT_USER=null, MEM=null, SYNC="idle", syncT=null;
+function freshDefault(){return JSON.parse(JSON.stringify(DEFAULT))}
+function cacheKey(){return KEY+(CURRENT_USER?("_"+CURRENT_USER.uid):"")}
+function lsGet(){try{return localStorage.getItem(cacheKey())}catch(e){return MEM}}
+function lsSet(v){try{localStorage.setItem(cacheKey(),v)}catch(e){MEM=v}}
+function loadCache(){try{const r=JSON.parse(lsGet());return r?Object.assign(freshDefault(),r):freshDefault()}catch(e){return freshDefault()}}
+let S=freshDefault(); /* real data loads after auth resolves */
+function userDoc(){return fbDb.collection(DATA_COLLECTION).doc(CURRENT_USER.uid)}
+
+/* save = instant local cache + debounced cloud sync */
+let dirty=false;
+function save(){lsSet(JSON.stringify(S));dirty=true;scheduleCloud();}
+function scheduleCloud(){
+  if(LOCAL_MODE||!CURRENT_USER||!fbDb)return;
+  setSync("saving");clearTimeout(syncT);syncT=setTimeout(cloudSave,1200);
+}
+async function cloudSave(){
+  if(!fbDb||!CURRENT_USER)return;
+  clearTimeout(syncT);
+  try{
+    await userDoc().set({data:S,email:CURRENT_USER.email||null,updatedAt:new Date().toISOString()},{merge:true});
+    dirty=false;setSync("saved");
+  }catch(e){setSync("off");}
+}
+/* flush any pending change immediately (used on tab hide / close / sign-out) */
+function flushCloud(){if(dirty)cloudSave();}
+if(typeof window!=="undefined"){
+  document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")flushCloud();});
+  window.addEventListener("pagehide",flushCloud);
+  window.addEventListener("beforeunload",flushCloud);
+}
+function setSync(s){SYNC=s;const el=document.getElementById("syncdot");if(el){el.className="syncdot "+(s==="idle"?"":s);el.querySelector(".lbl").textContent=({saving:"Saving…",saved:"Synced",off:"Offline — saved locally",idle:"Synced"}[s]||"");}}
+function today(){return new Date().toISOString().slice(0,10)}
+function esc(s){return(s==null?"":String(s)).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function uid(){return Math.random().toString(36).slice(2,9)}
+
+/* streak + activity */
+function touchActivity(){
+  const t=today();
+  if(S.lastActive===t)return;
+  const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  S.streak = (S.lastActive===y)?S.streak+1:1;
+  if(S.streak>S.bestStreak)S.bestStreak=S.streak;
+  S.lastActive=t; save();
+}
+function addPoints(n){S.points=(S.points||0)+n;save();}
+function lessonsByLevel(n){return LESSONS.filter(l=>l.lvl===n)}
+function lvlDone(s,n){return lessonsByLevel(n).every(l=>s.done.includes(l.id))}
+function lvlProgress(n){const a=lessonsByLevel(n);return a.length?a.filter(l=>S.done.includes(l.id)).length/a.length:0}
+function levelUnlocked(n){return n===1||lvlDone(S,n-1)}
+function overallProgress(){return Math.round(S.done.length/LESSONS.length*100)}
+
+/* achievements */
+function checkAch(){
+  let nu=[];
+  ACHIEVEMENTS.forEach(a=>{if(!S.achievements.includes(a.id)&&a.test(S)){S.achievements.push(a.id);nu.push(a);}});
+  if(nu.length){save();nu.forEach(a=>toast(a.em+" Achievement: "+a.nm));}
+}
+
+/* ============ UI PRIMITIVES ============ */
+let toastT;
+function toast(msg){const el=document.getElementById('toast');el.innerHTML=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2600);}
+function openModal(html){document.getElementById('modal').innerHTML=html;document.getElementById('scrim').classList.add('show');}
+function closeModal(){document.getElementById('scrim').classList.remove('show');}
+
+/* ============ ROUTER ============ */
+let VIEW={name:"dashboard",param:null};
+function go(name,param){VIEW={name,param};render();document.querySelector('.sidebar').classList.remove('open');document.getElementById('main').scrollTop=0;}
+const ICONS={
+  dashboard:'&#9737;', journey:'&#9650;', lab:'&#9851;', practices:'&#9728;',
+  coach:'&#128172;', journal:'&#128221;', library:'&#128218;', challenges:'&#127919;', progress:'&#128200;'
+};
+
+function renderSidebar(){
+  const nav=[
+    ["dashboard","Dashboard"],["journey","The Journey"],["lab","Reality Lab"],
+    ["practices","Daily Practice"],["coach","Daily Coach"],["journal","Journal"],
+    ["library","Insight Library"],["challenges","Mastery Challenges"],["progress","Growth"]
+  ];
+  const items=nav.map(([k,label])=>{
+    let badge="";
+    if(k==="journey")badge=`<span class="badge">${overallProgress()}%</span>`;
+    if(k==="journal"&&S.journal.length)badge=`<span class="badge">${S.journal.length}</span>`;
+    return `<div class="nav-item ${VIEW.name===k?'active':''}" onclick="go('${k}')">
+      <span class="ico">${ICONS[k]}</span><span>${label}</span>${badge}</div>`;
+  }).join("");
+  document.getElementById('sidebar').innerHTML=`
+    <div class="brand">
+      <div class="mark">Outsmarting<br><em>Reality</em></div>
+      <div class="sub">Companion</div>
+    </div>
+    ${items}
+    <div class="sidebar-foot">
+      <div style="color:var(--gold)">&#128293; ${S.streak||0}-day streak</div>
+      <div style="margin-top:4px">${S.points||0} alignment points</div>
+      ${CURRENT_USER?`<div class="acct"><div class="em">${esc(CURRENT_USER.email||'Signed in')}</div>
+        <div class="syncdot ${SYNC==='idle'?'':SYNC}" id="syncdot"><span class="d"></span><span class="lbl">${SYNC==='saving'?'Saving…':SYNC==='off'?'Offline — saved locally':'Synced'}</span></div>
+        <div style="margin-top:8px"><span class="so" onclick="signOut()">Sign out</span></div></div>`
+      :(LOCAL_MODE?`<div class="acct"><div class="em" style="color:var(--gold-2)">Local mode</div><div style="opacity:.7;margin-top:3px">Add your Firebase config to enable accounts &amp; cloud sync.</div></div>`:'')}
+      <div style="margin-top:10px;opacity:.6">A companion, not a saviour — you are your only saviour.</div>
+    </div>`;
+}
+
+/* ============ DASHBOARD ============ */
+function nextLesson(){return LESSONS.find(l=>!S.done.includes(l.id))||LESSONS[LESSONS.length-1]}
+function greeting(){const h=new Date().getHours();return h<12?"Good morning":h<18?"Good afternoon":"Good evening"}
+function renderDashboard(){
+  const nl=nextLesson();
+  const lvl=LEVELS.find(L=>L.n===nl.lvl);
+  const trustPct=Math.min(100,Math.round((S.ledger.filter(x=>x.status==='kept').length*10)));
+  const nm=S.name?(", "+esc(S.name)):"";
+  const coachQ=COACH[(S.coachIdx||0)%COACH.length];
+  const m=document.getElementById('main');
+  m.innerHTML=`<div class="wrap view">
+    <div class="hero">
+      <div class="greet">${greeting()}${nm}</div>
+      <h2>${S.desire?("Becoming the frequency of: "+esc(S.desire)):"Give yourself your desired reality before the world gives it to you."}</h2>
+      <p>${S.desire?"Every practice below shifts you one degree closer — internally first.":"Set your desired reality to personalise your journey, or dive straight into Level 1."}</p>
+      <div class="btnrow" style="margin-top:22px">
+        <button class="btn primary" onclick="go('lesson','${nl.id}')">${S.done.length?"Continue":"Begin"} &middot; ${esc(nl.title)}</button>
+        <button class="btn" onclick="setDesire()">${S.desire?"Edit desired reality":"Set desired reality"}</button>
+      </div>
+    </div>
+
+    <div class="grid g4" style="margin-top:18px">
+      <div class="stat"><div class="ring" style="--p:${overallProgress()}"><span>${overallProgress()}%</span></div><div class="k">Journey</div><div class="v">${S.done.length}<small>/${LESSONS.length}</small></div><div class="meta">lessons integrated</div></div>
+      <div class="stat"><div class="k">Streak</div><div class="v">${S.streak||0}<small> days</small></div><div class="meta">best: ${S.bestStreak||0}</div></div>
+      <div class="stat"><div class="ring" style="--p:${trustPct}"><span>${trustPct}%</span></div><div class="k">Self-Trust</div><div class="v">${S.ledger.filter(x=>x.status==='kept').length}</div><div class="meta">commitments kept</div></div>
+      <div class="stat"><div class="k">Alignment</div><div class="v">${S.points||0}</div><div class="meta">points earned</div></div>
+    </div>
+
+    <h2 class="sec">Today</h2>
+    <div class="grid g2">
+      <div class="card glass">
+        <div class="tag">Up next &middot; Level ${nl.lvl} ${esc(lvl.title)}</div>
+        <h3 class="serif" style="font-size:22px;margin:8px 0 6px">${esc(nl.title)}</h3>
+        <p class="mut">${esc(nl.insight.slice(0,150))}…</p>
+        <div class="btnrow" style="margin-top:16px"><button class="btn sm primary" onclick="go('lesson','${nl.id}')">Open lesson</button></div>
+      </div>
+      <div class="card glass">
+        <div class="tag">Daily coach</div>
+        <p class="serif gold" style="font-size:19px;line-height:1.4;margin:10px 0 14px">${esc(coachQ)}</p>
+        <div class="btnrow"><button class="btn sm" onclick="go('coach')">Reflect &rarr;</button><button class="btn sm ghost" onclick="nextCoach()">New question</button></div>
+      </div>
+    </div>
+
+    <h2 class="sec">Quick practice</h2>
+    <div class="grid g4">
+      ${PRACTICES.map(p=>`<div class="tool-card" onclick="go('practices')" style="min-height:auto;padding:18px">
+        <div class="ti" style="font-size:18px;margin-bottom:8px">${p.mins}<small style="font-size:11px"> min</small></div>
+        <h3 style="font-size:15px;margin-bottom:4px">${p.name}</h3>
+        <p style="font-size:12px">${p.tag}</p></div>`).join("")}
+    </div>
+
+    <h2 class="sec">Enter the Reality Lab</h2>
+    <div class="grid g3">
+      ${TOOLS.slice(0,3).map(t=>toolCardHTML(t)).join("")}
+    </div>
+    <div class="center" style="margin-top:18px"><button class="btn" onclick="go('lab')">See all six tools &rarr;</button></div>
+  </div>`;
+}
+
+/* small helpers used across views */
+function setDesire(){
+  openModal(`<div class="tag">Define it with pinpoint clarity</div>
+    <h3 class="serif" style="font-size:24px;margin:8px 0 6px">Your desired reality</h3>
+    <p class="mut tiny">There must be no confusion about what you want. State it as already true.</p>
+    <label class="fld">What is your desired reality?</label>
+    <textarea class="input" id="dr" placeholder="e.g. I run a calm, thriving business and money flows to me easily.">${esc(S.desire)}</textarea>
+    <label class="fld">Your name <span class="hint">(optional, for a warmer coach)</span></label>
+    <input class="input" id="dn" value="${esc(S.name)}" placeholder="Your first name">
+    <div class="btnrow" style="margin-top:18px"><button class="btn primary" onclick="saveDesire()">Save</button><button class="btn ghost" onclick="closeModal()">Cancel</button></div>`);
+}
+function saveDesire(){S.desire=document.getElementById('dr').value.trim();S.name=document.getElementById('dn').value.trim();if(!S.technique.desire)S.technique.desire=S.desire;save();closeModal();toast("&#10024; Desired reality set");render();}
+function nextCoach(){S.coachIdx=((S.coachIdx||0)+1)%COACH.length;save();render();}
+
+/* ============ JOURNEY ============ */
+function renderJourney(){
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    <p class="eyebrow">A Progressive Path &middot; Six Levels</p>
+    <h1 class="display">The <em>Journey</em></h1>
+    <p class="lead">From awareness to mastery. Each level unlocks the next — because you can only go somewhere you've never been by becoming someone you've never been.</p>
+    <div class="grid" style="margin-top:30px;gap:14px">
+      ${LEVELS.map(L=>{
+        const prog=Math.round(lvlProgress(L.n)*100);
+        const open=levelUnlocked(L.n);
+        const a=lessonsByLevel(L.n);
+        const doneN=a.filter(l=>S.done.includes(l.id)).length;
+        return `<div class="level-card ${open?'':'locked'}" ${open?`onclick="go('level',${L.n})"`:''}>
+          <div class="level-num">${L.n}</div>
+          <div style="flex:1;min-width:0">
+            <div class="row sp"><h3>${esc(L.title)}</h3>${prog===100?'<span class="chip green">&#10003; Complete</span>':open?'':'<span class="chip">&#128274; Locked</span>'}</div>
+            <div class="tag" style="margin:2px 0 8px">${esc(L.tag)}</div>
+            <p class="desc">${esc(L.desc)}</p>
+            <div class="row" style="gap:14px"><div class="lbar" style="flex:1"><i style="width:${prog}%"></i></div><span class="tiny fa">${doneN}/${a.length}</span></div>
+            ${open?'':`<p class="tiny fa" style="margin:10px 0 0">Complete Level ${L.n-1} to unlock.</p>`}
+          </div></div>`;
+      }).join("")}
+    </div>
+  </div>`;
+}
+
+/* ============ LEVEL ============ */
+function renderLevel(n){
+  const L=LEVELS.find(x=>x.n===n);const a=lessonsByLevel(n);
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    <button class="btn sm ghost" onclick="go('journey')">&larr; All levels</button>
+    <p class="eyebrow" style="margin-top:18px">Level ${L.n} &middot; ${esc(L.tag)}</p>
+    <h1 class="display">${esc(L.title)}</h1>
+    <p class="lead">${esc(L.desc)}</p>
+    <div style="margin-top:28px">
+      ${a.map((l,i)=>{
+        const done=S.done.includes(l.id);
+        return `<div class="lesson-row ${done?'done':''}" onclick="go('lesson','${l.id}')">
+          <div class="dot">${done?'&#10003;':i+1}</div>
+          <div style="flex:1;min-width:0"><div class="t">${esc(l.title)}</div><div class="m">${l.mins} min &middot; ${esc(l.chapter)}</div></div>
+          <div class="arrow">&rarr;</div></div>`;
+      }).join("")}
+    </div>
+  </div>`;
+}
+
+/* ============ LESSON ============ */
+function renderLesson(id){
+  const l=LESSONS.find(x=>x.id===id);if(!l)return go('journey');
+  const idx=LESSONS.indexOf(l);const next=LESSONS[idx+1];
+  const done=S.done.includes(l.id);
+  const tool=l.tool?TOOLS.find(t=>t.id===l.tool):null;
+  const flow = l.id==='l14'?`<div class="flow"><span class="node gold">Frequency</span><span class="ar">&rarr;</span><span class="node">Intuition</span><span class="ar">&rarr;</span><span class="node">Nudges</span><span class="ar">&rarr;</span><span class="node">Action</span><span class="ar">&rarr;</span><span class="node">Reality</span></div>`:'';
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    <button class="btn sm ghost" onclick="go('level',${l.lvl})">&larr; Level ${l.lvl}</button>
+    <div class="lesson-hero" style="margin-top:16px">
+      <p class="eyebrow" style="margin-bottom:10px">Lesson ${idx+1} of ${LESSONS.length} &middot; ${esc(l.chapter)}</p>
+      <h1 class="display" style="font-size:36px">${esc(l.title)}</h1>
+      <div class="callout" style="margin:18px 0 0"><div class="lab">The Principle</div><div class="serif" style="font-size:18px;font-style:italic;color:var(--gold-2)">${esc(l.principle)}</div></div>
+    </div>
+
+    <h2 class="sec">Key Insight</h2>
+    <p style="font-size:16px">${esc(l.insight)}</p>
+    ${flow}
+
+    <h2 class="sec">Why It Matters</h2>
+    <p class="mut" style="font-size:15.5px">${esc(l.why)}</p>
+
+    <div class="model" style="margin:22px 0"><div class="n">&#9670;</div><div><div class="tag" style="color:var(--gold)">Mental Model &middot; ${esc(l.model.name)}</div><p style="margin:6px 0 0">${esc(l.model.body)}</p></div></div>
+
+    <blockquote class="quote">${esc(l.quote.text)}<cite>${esc(l.quote.cite)}</cite></blockquote>
+
+    <h2 class="sec">Real-World Applications</h2>
+    <ul class="applist">${l.apps.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+
+    <div class="grid g2" style="margin-top:26px">
+      <div class="card"><div class="tag" style="color:var(--gold)">Behaviour change</div><p style="margin:8px 0 0">${esc(l.behavior)}</p></div>
+      <div class="card"><div class="tag" style="color:var(--gold)">Micro-practice</div><p style="margin:8px 0 0">${esc(l.practice)}</p></div>
+    </div>
+
+    <h2 class="sec">Coaching Prompts</h2>
+    <div class="grid" style="gap:10px">${l.prompts.map(p=>`<div class="li"><div style="font-size:18px;color:var(--gold)">&#9679;</div><div class="body"><div class="x serif" style="font-style:italic;font-weight:500">${esc(p)}</div></div></div>`).join("")}</div>
+
+    <h2 class="sec">Journal This Lesson</h2>
+    ${l.journal.map(p=>`<div class="card" style="margin-bottom:12px"><p class="mut" style="margin:0 0 10px">${esc(p)}</p><textarea class="input" id="jl_${l.id}_${l.journal.indexOf(p)}" placeholder="Write freely…"></textarea><div class="btnrow" style="margin-top:10px"><button class="btn sm" onclick="saveLessonJournal('${l.id}',${l.journal.indexOf(p)},\`${esc(p).replace(/`/g,'')}\`)">Save entry</button></div></div>`).join("")}
+
+    ${tool?`<div class="card glass" style="margin-top:24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap"><div style="font-size:30px">${tool.icon}</div><div style="flex:1;min-width:200px"><div class="tag" style="color:var(--gold)">Practise with a tool</div><div class="serif" style="font-size:18px;margin:4px 0 2px">${esc(tool.name)}</div><p class="mut tiny" style="margin:0">${esc(tool.tagline)}</p></div><button class="btn primary" onclick="go('tool','${tool.id}')">Open tool</button></div>`:''}
+
+    <div class="divider"></div>
+    <div class="row sp" style="flex-wrap:wrap;gap:12px">
+      <button class="btn ${done?'':'primary'}" onclick="toggleDone('${l.id}')">${done?'&#10003; Integrated':'Mark as integrated'}</button>
+      ${next?`<button class="btn ghost" onclick="go('lesson','${next.id}')">Next &middot; ${esc(next.title)} &rarr;</button>`:`<button class="btn ghost" onclick="go('progress')">View your growth &rarr;</button>`}
+    </div>
+  </div>`;
+}
+function saveLessonJournal(lid,i,prompt){
+  const el=document.getElementById('jl_'+lid+'_'+i);const t=el.value.trim();if(!t){toast("Write something first");return;}
+  S.journal.unshift({id:uid(),prompt:prompt,text:t,ts:Date.now(),lesson:lid});
+  addPoints(5);touchActivity();save();checkAch();el.value="";toast("&#128221; Journal saved (+5)");
+}
+function toggleDone(id){
+  const i=S.done.indexOf(id);
+  if(i>=0){S.done.splice(i,1);}
+  else{S.done.push(id);addPoints(20);touchActivity();toast("&#10024; Lesson integrated (+20)");}
+  save();checkAch();renderSidebar();renderLesson(id);
+}
+
+/* ============ GROWTH / PROGRESS ============ */
+function renderProgress(){
+  const trustKept=S.ledger.filter(x=>x.status==='kept').length;
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    <p class="eyebrow">Measure the transformation</p>
+    <h1 class="display">Your <em>Growth</em></h1>
+    <p class="lead">Reality is the mirror; this is the inner ledger. Watch frequency compound — consistency is a form of alchemy.</p>
+
+    <div class="grid g4" style="margin-top:26px">
+      <div class="stat"><div class="k">Overall</div><div class="v">${overallProgress()}%</div><div class="meta">${S.done.length}/${LESSONS.length} lessons</div></div>
+      <div class="stat"><div class="k">Best streak</div><div class="v">${S.bestStreak||0}<small> d</small></div><div class="meta">current: ${S.streak||0}</div></div>
+      <div class="stat"><div class="k">Commitments</div><div class="v">${trustKept}</div><div class="meta">kept &middot; ${S.ledger.filter(x=>x.status==='broke').length} missed</div></div>
+      <div class="stat"><div class="k">Points</div><div class="v">${S.points||0}</div><div class="meta">alignment</div></div>
+    </div>
+
+    <h2 class="sec">Level mastery</h2>
+    <div class="grid" style="gap:10px">
+      ${LEVELS.map(L=>{const p=Math.round(lvlProgress(L.n)*100);return `<div class="card" style="padding:16px 20px"><div class="row sp"><strong>${L.n}. ${esc(L.title)}</strong><span class="tiny fa">${p}%</span></div><div class="lbar" style="max-width:none;margin-top:10px"><i style="width:${p}%"></i></div></div>`}).join("")}
+    </div>
+
+    <h2 class="sec">Practice counters</h2>
+    <div class="grid g4">
+      <div class="stat"><div class="k">Technique runs</div><div class="v">${S.counters.technique||0}</div></div>
+      <div class="stat"><div class="k">Alchemy cycles</div><div class="v">${S.counters.alchemy||0}</div></div>
+      <div class="stat"><div class="k">Beliefs rewritten</div><div class="v">${S.beliefs.length}</div></div>
+      <div class="stat"><div class="k">Journal entries</div><div class="v">${S.journal.length}</div></div>
+    </div>
+
+    <h2 class="sec">Achievements <span class="tiny fa">(${S.achievements.length}/${ACHIEVEMENTS.length})</span></h2>
+    <div class="grid g3">
+      ${ACHIEVEMENTS.map(a=>{const u=S.achievements.includes(a.id);return `<div class="ach ${u?'':'locked'}"><div class="em">${a.em}</div><div><div class="nm">${a.nm}</div><div class="ds">${a.ds}</div></div></div>`}).join("")}
+    </div>
+
+    <h2 class="sec">Most transformational, ranked</h2>
+    <p class="mut tiny" style="margin-top:-6px">Distilled from the book by impact, ease, speed, and long-term value.</p>
+    <div class="grid g2" style="margin-top:14px">
+      ${top10card("Top Concepts",TOP10.concepts)}
+      ${top10card("Top Exercises",TOP10.exercises)}
+      ${top10card("Top Behaviour Changes",TOP10.behaviors)}
+      ${top10card("Top Mental Models",TOP10.models)}
+      ${top10card("Top Journal Prompts",TOP10.journals)}
+      ${top10card("Top Coaching Questions",TOP10.questions)}
+    </div>
+    <div class="divider"></div>
+    <button class="btn ghost" onclick="resetAll()">Reset all progress</button>
+  </div>`;
+}
+function top10card(title,arr){return `<div class="card"><div class="tag" style="color:var(--gold)">${title}</div><ol style="margin:12px 0 0;padding-left:20px">${arr.map(x=>`<li style="margin-bottom:7px;color:var(--muted)">${esc(x)}</li>`).join("")}</ol></div>`}
+function resetAll(){openModal(`<h3 class="serif" style="font-size:22px">Reset everything?</h3><p class="mut">This clears all progress, journals, and tools on this device. It cannot be undone.</p><div class="btnrow" style="margin-top:16px"><button class="btn" style="border-color:var(--red);color:var(--red)" onclick="S=JSON.parse(JSON.stringify(DEFAULT));save();closeModal();go('dashboard');toast('Reset complete')">Yes, reset</button><button class="btn ghost" onclick="closeModal()">Cancel</button></div>`)}
+
+/* ============ REALITY LAB ============ */
+function toolCardHTML(t){return `<div class="tool-card" onclick="go('tool','${t.id}')"><div class="ti">${t.icon}</div><h3>${esc(t.name)}</h3><p>${esc(t.blurb)}</p><div class="open">Open tool &rarr;</div></div>`}
+function renderLab(){
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    <p class="eyebrow">Interactive instruments</p>
+    <h1 class="display">Reality <em>Lab</em></h1>
+    <p class="lead">Six tools that turn the book's core methods into living practice. Techniques don't create reality — they position you to. Conviction does the rest.</p>
+    <div class="grid g3" style="margin-top:30px">${TOOLS.map(toolCardHTML).join("")}</div>
+  </div>`;
+}
+function renderTool(id){
+  TW={}; // reset working state
+  const map={technique:toolTechnique,alchemy:toolAlchemy,ledger:toolLedger,belief:toolBelief,audit:toolAudit,keys:toolKeys};
+  (map[id]||renderLab)();
+}
+let TW={};
+function toolHeader(t){return `<button class="btn sm ghost" onclick="go('lab')">&larr; Reality Lab</button>
+  <div style="margin-top:16px;display:flex;gap:16px;align-items:flex-start">
+    <div style="font-size:34px">${t.icon}</div>
+    <div><p class="eyebrow" style="margin:0 0 6px">${esc(t.tagline)}</p><h1 class="display" style="font-size:34px;margin:0">${esc(t.name)}</h1></div>
+  </div>`;
+}
+
+/* ---------- TOOL 1: THE TECHNIQUE BUILDER ---------- */
+function toolTechnique(){
+  const t=TOOLS.find(x=>x.id==='technique');const T=S.technique;
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    ${toolHeader(t)}
+    <div class="card glass" style="margin-top:24px">
+      <div class="tag" style="color:var(--gold)">Part One &middot; The vivid scene</div>
+      <p class="mut tiny" style="margin:6px 0 0">A short scene where someone who cares acknowledges your desire as already real — with touch and genuine emotion, looped like a movie clip.</p>
+      <label class="fld">1. Clearly define your desired reality <span class="hint">(pinpoint clarity, stated as real)</span></label>
+      <textarea class="input" id="t_desire" placeholder="e.g. I just signed the role I wanted.">${esc(T.desire||S.desire)}</textarea>
+      <label class="fld">2. Who acknowledges it? <span class="hint">a friend, partner, family member, or admired figure</span></label>
+      <input class="input" id="t_person" value="${esc(T.person)}" placeholder="e.g. My best friend Sam">
+      <label class="fld">3. What do they say? <span class="hint">in their natural, personal voice</span></label>
+      <input class="input" id="t_comment" value="${esc(T.comment)}" placeholder="e.g. I knew you'd get it — you're so happy!">
+      <label class="fld">4. The physical touch <span class="hint">hug, high five, fist bump — something intimate</span></label>
+      <input class="input" id="t_touch" value="${esc(T.touch)}" placeholder="e.g. A long, warm hug">
+      <label class="fld">5. The emotion you'd feel <span class="hint">euphoria, calm, tears of joy, deep peace — yours, not one-size-fits-all</span></label>
+      <input class="input" id="t_feeling" value="${esc(T.feeling)}" placeholder="e.g. Quiet, certain calm">
+    </div>
+    <div class="card glass" style="margin-top:16px">
+      <div class="tag" style="color:var(--gold)">Part Two &middot; The mental affirmation</div>
+      <p class="mut tiny" style="margin:6px 0 0">One simple, authentic sentence you'd truly think the moment it's real — repeated through the day, felt, not forced.</p>
+      <label class="fld">Your one-line affirmation</label>
+      <input class="input" id="t_aff" value="${esc(T.affirmation)}" placeholder="e.g. I'm so grateful I got this.">
+    </div>
+    <div class="btnrow" style="margin-top:18px">
+      <button class="btn primary" onclick="saveTechnique()">Save my Technique</button>
+      <button class="btn" onclick="runTechnique()" ${(!T.person&&!document.getElementById)?'':''}>&#9654; Run guided session</button>
+    </div>
+    ${T.affirmation?`<div class="card" style="margin-top:18px"><div class="tag" style="color:var(--gold)">Your practice card</div>
+      <p class="serif" style="font-size:17px;font-style:italic;color:var(--gold-2);margin:10px 0">"${esc(T.comment||'…')}"</p>
+      <p class="mut tiny">${esc(T.person||'Someone who cares')} &middot; ${esc(T.touch||'touch')} &middot; feeling: ${esc(T.feeling||'…')}</p>
+      <div class="divider"></div>
+      <p class="serif gold" style="font-size:18px;margin:0">&#8220;${esc(T.affirmation)}&#8221;</p></div>`:''}
+  </div>`;
+}
+function saveTechnique(){
+  S.technique={desire:val('t_desire'),person:val('t_person'),comment:val('t_comment'),touch:val('t_touch'),feeling:val('t_feeling'),affirmation:val('t_aff')};
+  if(!S.desire&&S.technique.desire)S.desire=S.technique.desire;
+  addPoints(10);touchActivity();save();checkAch();toast("&#10024; Technique saved (+10)");toolTechnique();
+}
+function val(id){const e=document.getElementById(id);return e?e.value.trim():""}
+function runTechnique(){
+  const T=S.technique;
+  if(!T.comment&&!T.affirmation){toast("Build your Technique first");return;}
+  TW={i:0,stages:[
+    {t:"Settle",txt:"Sit or lie down. Let your body grow loose, heavy, weightless. There is no rush — relaxation is mandatory."},
+    {t:"Enter the scene",txt:`See ${esc(T.person||'someone who loves you')}. ${esc(T.touch||'They embrace you')}. They say: &#8220;${esc(T.comment||'…')}&#8221;`},
+    {t:"Loop it",txt:"Replay the moment like a short film — fading out, seamlessly restarting. Keep it short and vivid."},
+    {t:"Feel it fully",txt:`Let the feeling rise: ${esc(T.feeling||'the emotion of it being real')}. Sink into the warmth, the tone of voice, the touch.`},
+    {t:"Carry the sentence",txt:`Through your day, think: &#8220;${esc(T.affirmation||'It is already done.')}&#8221; — and feel it, gently, whenever you remember.`}
+  ]};
+  techShow();
+}
+function techShow(){
+  const i=TW.i, stages=TW.stages, s=stages[i];
+  openModal(`<div class="center">
+    <div class="steps" style="margin-bottom:20px">${stages.map((_,k)=>`<div class="s ${k<i?'done':k===i?'on':''}"></div>`).join("")}</div>
+    <div class="orb breathe"><div class="tt">${i+1}</div></div>
+    <h3 class="serif" style="font-size:22px;margin:18px 0 8px">${s.t}</h3>
+    <p class="mut" style="max-width:42ch;margin:0 auto 22px">${s.txt}</p>
+    <div class="btnrow" style="justify-content:center">
+      ${i>0?`<button class="btn ghost" onclick="techNav(-1)">Back</button>`:''}
+      ${i<stages.length-1?`<button class="btn primary" onclick="techNav(1)">Continue</button>`:`<button class="btn primary" onclick="finishTechnique()">Complete session</button>`}
+    </div>
+    <p class="tiny fa" style="margin-top:16px">Stop the moment you feel strain. Never force it.</p>
+  </div>`);
+}
+function techNav(d){TW.i=Math.max(0,Math.min(TW.stages.length-1,TW.i+d));techShow();}
+function finishTechnique(){
+  S.counters.technique=(S.counters.technique||0)+1;addPoints(15);touchActivity();save();checkAch();closeModal();
+  toast("&#128302; Technique complete &middot; muscle +1 (+15)");
+}
+
+/* ---------- TOOL 2: EMOTIONAL ALCHEMY ---------- */
+const ALCHEMY_STEPS=[
+  {t:"Relax",txt:"Sit or lie down in a quiet space. Let your body fully relax. Three slow breaths."},
+  {t:"Bring it to mind",txt:"Gently bring the adversity — the situation, person, or event — into your awareness."},
+  {t:"Feel fully",txt:"Let yourself feel the full depth of the emotion. No resistance, no avoidance. What you resist persists. Stay present with it."},
+  {t:"Stay until it shifts",txt:"Remain with the emotion until it begins to soften. This can take minutes or longer. There is no rush. Let its intensity fade naturally."},
+  {t:"Reach neutrality",txt:"The charge fades. You arrive at a neutral, still place — pure awareness underneath the wave."},
+  {t:"Extract the seed",txt:"From neutrality, revisit the adversity and search for the hidden seed: a perspective or insight that supports your desired reality.",capture:true},
+  {t:"Feel the shift",txt:"Focus on that new perspective. Let the positive emotion it brings rise. Immerse yourself in the uplifted state."},
+  {t:"Integrate",txt:"Return to your day holding the seed. If the mind drifts back to the negative, gently redirect it."}
+];
+function toolAlchemy(){
+  const t=TOOLS.find(x=>x.id==='alchemy');
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    ${toolHeader(t)}
+    <div class="card glass" style="margin-top:24px">
+      <p class="mut" style="margin:0">Every adversity holds a hidden energetic seed of your desired reality. Emotional alchemy doesn't repress or ignore the negative — it feels it fully, reaches stillness, and extracts the seed. Stillness is the only solution to turbulence.</p>
+      <label class="fld">What's weighing on you? <span class="hint">name the adversity you'll work with</span></label>
+      <textarea class="input" id="al_adv" placeholder="e.g. The deal fell through and I feel like a failure."></textarea>
+      <div class="btnrow" style="margin-top:16px"><button class="btn primary" onclick="runAlchemy()">&#9654; Begin guided alchemy</button></div>
+    </div>
+    ${S.lastSeed?`<div class="card" style="margin-top:18px"><div class="tag" style="color:var(--green)">Your last extracted seed</div><p class="serif" style="font-size:17px;color:var(--green);margin:10px 0 0">"${esc(S.lastSeed)}"</p></div>`:''}
+  </div>`;
+}
+function runAlchemy(){
+  const adv=val('al_adv');
+  TW={adv:adv,i:0,seed:""};
+  alchemyShow();
+}
+function alchemyShow(){
+  const i=TW.i;const s=ALCHEMY_STEPS[i];
+  openModal(`<div class="center">
+    <div class="steps" style="margin-bottom:20px">${ALCHEMY_STEPS.map((_,k)=>`<div class="s ${k<i?'done':k===i?'on':''}"></div>`).join("")}</div>
+    <div class="orb breathe"><div class="tt">&#9851;</div></div>
+    <h3 class="serif" style="font-size:22px;margin:18px 0 8px">${i+1}. ${s.t}</h3>
+    ${TW.adv?`<p class="tiny fa" style="margin:0 0 10px">Working with: "${esc(TW.adv)}"</p>`:''}
+    <p class="mut" style="max-width:44ch;margin:0 auto 18px">${s.txt}</p>
+    ${s.capture?`<textarea class="input" id="al_seed" placeholder="The hidden seed I find is…" style="text-align:left">${esc(TW.seed)}</textarea>`:''}
+    <div class="btnrow" style="justify-content:center;margin-top:18px">
+      ${i>0?`<button class="btn ghost" onclick="alchemyNav(-1)">Back</button>`:''}
+      ${i<ALCHEMY_STEPS.length-1?`<button class="btn primary" onclick="alchemyNav(1)">Continue</button>`:`<button class="btn primary" onclick="finishAlchemy()">Complete</button>`}
+    </div>
+    <p class="tiny fa" style="margin-top:14px">Take all the time you need at each step.</p>
+  </div>`);
+}
+function alchemyNav(d){
+  const cur=ALCHEMY_STEPS[TW.i];
+  if(cur.capture){const e=document.getElementById('al_seed');if(e)TW.seed=e.value.trim();}
+  TW.i=Math.max(0,Math.min(ALCHEMY_STEPS.length-1,TW.i+d));alchemyShow();
+}
+function finishAlchemy(){
+  const e=document.getElementById('al_seed');if(e)TW.seed=e.value.trim();
+  if(TW.seed)S.lastSeed=TW.seed;
+  S.counters.alchemy=(S.counters.alchemy||0)+1;addPoints(15);touchActivity();
+  if(TW.seed)S.journal.unshift({id:uid(),prompt:"Emotional Alchemy — seed extracted from: "+(TW.adv||"an adversity"),text:TW.seed,ts:Date.now()});
+  save();checkAch();closeModal();toast("&#9851; Alchemy complete (+15)");toolAlchemy();
+}
+
+/* ---------- TOOL 3: SELF-TRUST LEDGER ---------- */
+function toolLedger(){
+  const t=TOOLS.find(x=>x.id==='ledger');
+  const kept=S.ledger.filter(x=>x.status==='kept').length;
+  const broke=S.ledger.filter(x=>x.status==='broke').length;
+  const open=S.ledger.filter(x=>x.status==='open');
+  const total=kept+broke;
+  const reserve=total?Math.round(kept/total*100):0;
+  const conviction=Math.min(100,kept*8);
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    ${toolHeader(t)}
+    <div class="grid g2" style="margin-top:24px">
+      <div class="stat"><div class="ring" style="--p:${reserve}"><span>${reserve}%</span></div><div class="k">Self-Trust reserve</div><div class="v">${kept}<small>/${total} kept</small></div><div class="meta">the mind keeps score: ATFT vs ITFT</div></div>
+      <div class="stat"><div class="ring" style="--p:${conviction}"><span>${conviction}%</span></div><div class="k">Conviction muscle</div><div class="v">${conviction}<small>%</small></div><div class="meta">self-trust becomes conviction</div></div>
+    </div>
+    <div class="card glass" style="margin-top:16px">
+      <div class="tag" style="color:var(--gold)">Establish your word as law</div>
+      <label class="fld">A commitment — to do, or to stop</label>
+      <input class="input" id="lg_text" placeholder="e.g. Wake at 6am &middot; Send the email &middot; Stop checking my phone first thing" onkeydown="if(event.key==='Enter')addLedger()">
+      <div class="btnrow" style="margin-top:12px">
+        <select class="input" id="lg_type" style="max-width:180px"><option value="do">I will do this</option><option value="stop">I will stop this</option></select>
+        <button class="btn primary" onclick="addLedger()">Add commitment</button>
+      </div>
+    </div>
+    <h2 class="sec">Open commitments</h2>
+    ${open.length?open.map(x=>`<div class="li">
+      <div class="check" title="Mark kept" onclick="markLedger('${x.id}','kept')">&#10003;</div>
+      <div class="body"><div class="x">${esc(x.text)}</div><div class="y">${x.type==='stop'?'Stop':'Do'} &middot; ${timeAgo(x.ts)}</div></div>
+      <button class="del" title="Mark missed" onclick="markLedger('${x.id}','broke')">&times;</button>
+    </div>`).join(""):`<div class="empty"><div class="ico">&#9878;</div>No open commitments. The more you keep your word, the more reality trusts you.</div>`}
+    ${total?`<h2 class="sec">History</h2>${S.ledger.filter(x=>x.status!=='open').slice(0,30).map(x=>`<div class="li"><div class="check ${x.status==='kept'?'on':'no'}">${x.status==='kept'?'&#10003;':'&times;'}</div><div class="body"><div class="x">${esc(x.text)}</div><div class="y">${x.status==='kept'?'Kept (ATFT)':'Missed (ITFT)'} &middot; ${timeAgo(x.ts)}</div></div></div>`).join("")}`:''}
+  </div>`;
+}
+function addLedger(){const txt=val('lg_text');if(!txt){toast("Write a commitment first");return;}S.ledger.unshift({id:uid(),text:txt,type:document.getElementById('lg_type').value,status:'open',ts:Date.now()});save();toolLedger();}
+function markLedger(id,status){const x=S.ledger.find(y=>y.id===id);if(!x)return;x.status=status;x.ts=Date.now();if(status==='kept'){addPoints(10);touchActivity();toast("&#10003; Kept &middot; self-trust +1 (+10)");}else{toast("Logged honestly. You can lie to others, never to the universe.");}save();checkAch();renderSidebar();toolLedger();}
+function timeAgo(ts){const d=Math.floor((Date.now()-ts)/1000);if(d<60)return"just now";if(d<3600)return Math.floor(d/60)+"m ago";if(d<86400)return Math.floor(d/3600)+"h ago";return Math.floor(d/86400)+"d ago";}
+
+/* ---------- TOOL 4: BELIEF REWRITER ---------- */
+function toolBelief(){
+  const t=TOOLS.find(x=>x.id==='belief');
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    ${toolHeader(t)}
+    <div class="card glass" style="margin-top:24px">
+      <p class="mut" style="margin:0">A belief is a thought charged with emotion and conviction — an idea pretending to be truth. Decide that no belief is unchangeable, then consciously choose the one your desired reality requires.</p>
+      <label class="fld">1. The limiting belief <span class="hint">what do you hold as 'true' that contradicts your desired reality?</span></label>
+      <textarea class="input" id="b_old" placeholder="e.g. I have to work hard for money."></textarea>
+      <label class="fld">2. Where did it come from?</label>
+      <select class="input" id="b_origin"><option value="Experience">Experience — I lived something and called it truth</option><option value="Adoption">Adoption — I inherited it from others</option><option value="Both">Both experience and adoption</option></select>
+      <label class="fld">3. What emotion guards it? <span class="hint">if it flares when questioned, you found the belief</span></label>
+      <input class="input" id="b_emotion" placeholder="e.g. Anxiety, defensiveness, fear">
+      <label class="fld">4. The replacement belief <span class="hint">what would you believe if you were already living your desired reality?</span></label>
+      <textarea class="input" id="b_new" placeholder="e.g. Money comes to me easily; I don't have to work hard for it."></textarea>
+      <div class="btnrow" style="margin-top:16px"><button class="btn primary" onclick="saveBelief()">Rewrite belief</button></div>
+    </div>
+    ${S.beliefs.length?`<h2 class="sec">Beliefs you've rewritten <span class="tiny fa">(${S.beliefs.length})</span></h2>${S.beliefs.map(b=>`<div class="card" style="margin-bottom:12px"><div class="row" style="gap:8px;flex-wrap:wrap"><span class="chip">${esc(b.origin)}</span>${b.emotion?`<span class="chip">guarded by: ${esc(b.emotion)}</span>`:''}<button class="del" style="margin-left:auto" onclick="delBelief('${b.id}')">&times;</button></div>
+      <p style="margin:12px 0 6px;text-decoration:line-through;color:var(--faint)">${esc(b.old)}</p>
+      <p class="serif gold" style="font-size:17px;margin:0">&rarr; ${esc(b.new)}</p></div>`).join("")}`:''}
+  </div>`;
+}
+function saveBelief(){
+  const o=val('b_old'),n=val('b_new');
+  if(!o||!n){toast("Add both the old and new belief");return;}
+  S.beliefs.unshift({id:uid(),old:o,new:n,origin:document.getElementById('b_origin').value,emotion:val('b_emotion'),ts:Date.now()});
+  addPoints(10);touchActivity();save();checkAch();toast("&#9728; Belief rewritten (+10)");toolBelief();
+}
+function delBelief(id){S.beliefs=S.beliefs.filter(b=>b.id!==id);save();toolBelief();}
+
+/* ---------- TOOL 5: FREQUENCY AUDIT ---------- */
+const POLARITY={
+  "Unlovable":"Lovable","Unappreciated":"Appreciated","Unseen":"Seen","Lonely":"Connected",
+  "Unworthy":"Worthy","Undeserving":"Deserving","Unqualified":"Qualified","A burden":"Cherished",
+  "Stressed":"Relieved","Anxious":"Calm","Fearful":"Secure","Scarcity / lack":"Abundance",
+  "Defeated":"Victorious","Stuck":"Free","Rejected":"Accepted","Overlooked":"Recognised",
+  "Frustrated":"At peace","Hopeless":"Hopeful","Ashamed":"Proud","Powerless":"Sovereign","Behind":"On time / ahead"
+};
+function toolAudit(){
+  const t=TOOLS.find(x=>x.id==='audit');
+  const opts=Object.keys(POLARITY).map(k=>`<option value="${k}">${k}</option>`).join("");
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    ${toolHeader(t)}
+    <div class="card glass" style="margin-top:24px">
+      <p class="mut" style="margin:0">The universe magnifies and maintains your dominant state. Honesty is a must — you can lie to others but never to the universe. Name what's being magnified, then feed its complementary polarity.</p>
+      <label class="fld">Which area of life are you auditing?</label>
+      <select class="input" id="a_area"><option>Money</option><option>Love &amp; relationships</option><option>Career</option><option>Health</option><option>Self-worth</option><option>General baseline</option></select>
+      <label class="fld">What is your honest, day-to-day feeling here?</label>
+      <select class="input" id="a_feel" onchange="auditFlip()">${opts}</select>
+      <div id="a_flip"></div>
+    </div>
+    ${S.audits.length?`<h2 class="sec">Past readings</h2>${S.audits.slice(0,8).map(a=>`<div class="li"><div class="body"><div class="x">${esc(a.area)}: <span style="color:var(--red)">${esc(a.from)}</span> &rarr; <span style="color:var(--green)">${esc(a.to)}</span></div><div class="y">${a.evidence&&a.evidence.length?esc(a.evidence.filter(Boolean).join(' · ')):'no evidence captured'} &middot; ${timeAgo(a.ts)}</div></div></div>`).join("")}`:''}
+  </div>`;
+  setTimeout(auditFlip,0);
+}
+function auditFlip(){
+  const fe=document.getElementById('a_feel');if(!fe)return; /* guard: view changed */
+  const from=fe.value;const to=POLARITY[from];
+  document.getElementById('a_flip').innerHTML=`
+    <div class="flow" style="margin-top:18px"><span class="node">${esc(from)}</span><span class="ar">&rarr;</span><span class="node gold">${esc(to)}</span></div>
+    <p class="mut tiny">This is being magnified and maintained. Its energetic opposite — <strong class="gold">${esc(to)}</strong> — already exists in your life. Find three proofs, big or small, and immerse in the feeling of each.</p>
+    <label class="fld">Proof 1 that you are already ${esc(to.toLowerCase())}</label><input class="input" id="a_e1" placeholder="A moment, big or small…">
+    <label class="fld">Proof 2</label><input class="input" id="a_e2" placeholder="Another moment…">
+    <label class="fld">Proof 3</label><input class="input" id="a_e3" placeholder="One more…">
+    <div class="btnrow" style="margin-top:16px"><button class="btn primary" onclick="saveAudit()">Save reading &amp; flip the polarity</button></div>`;
+}
+function saveAudit(){
+  const from=document.getElementById('a_feel').value;
+  const rec={area:val('a_area')||document.getElementById('a_area').value,from:from,to:POLARITY[from],evidence:[val('a_e1'),val('a_e2'),val('a_e3')],ts:Date.now()};
+  S.audits.unshift(rec);S.counters.audit=(S.counters.audit||0)+1;addPoints(10);touchActivity();save();checkAch();toast("&#128301; Polarity flipped (+10)");toolAudit();
+}
+
+/* ---------- TOOL 6: 7 KEYS ALIGNMENT ---------- */
+const KEYS7=[
+  {k:"Beliefs",d:"Do your beliefs reflect your desired reality?"},
+  {k:"Conviction",d:"Do you KNOW it, not just hope?"},
+  {k:"Perception",d:"Do you see life through your desired-reality lens?"},
+  {k:"Emotion",d:"Do you feel now how you'd feel there?"},
+  {k:"Focus",d:"Is your attention on the desired, not the unwanted?"},
+  {k:"Reactions",d:"Do you respond by design, not react by default?"},
+  {k:"Expectations",d:"Do you expect the best, and prepare for it?"}
+];
+function toolKeys(){
+  const t=TOOLS.find(x=>x.id==='keys');
+  const cur=S.keys||{};
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    ${toolHeader(t)}
+    <div class="card glass" style="margin-top:24px">
+      <p class="mut" style="margin:0 0 4px">Your frequency is the sum of seven keys. Change one or two and the neglected ones quietly contradict your reality. Rate each, honestly, for your desired reality:</p>
+      <p class="serif gold" style="margin:6px 0 6px;font-size:16px">${esc(S.desire||'(set your desired reality on the dashboard)')}</p>
+      ${KEYS7.map((x,i)=>`<label class="fld">${x.k} <span class="hint">— ${x.d}</span></label>
+        <div class="row" style="gap:14px"><input class="range" type="range" min="0" max="100" value="${cur[x.k]!=null?cur[x.k]:50}" id="k_${i}" oninput="keysScore()"><span class="gold" id="kv_${i}" style="width:42px;text-align:right;font-weight:600">${cur[x.k]!=null?cur[x.k]:50}</span></div>`).join("")}
+      <div id="k_out" style="margin-top:22px"></div>
+      <div class="btnrow" style="margin-top:18px"><button class="btn primary" onclick="saveKeys()">Save alignment reading</button></div>
+    </div>
+  </div>`;
+  setTimeout(keysScore,0);
+}
+function keysScore(){
+  if(!document.getElementById('k_0'))return; /* guard: view changed */
+  let vals=KEYS7.map((x,i)=>+document.getElementById('k_'+i).value);
+  vals.forEach((v,i)=>document.getElementById('kv_'+i).textContent=v);
+  const avg=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+  let minI=0;vals.forEach((v,i)=>{if(v<vals[minI])minI=i;});
+  const label=avg>=80?"Strongly aligned":avg>=60?"Aligning — keep feeding it":avg>=40?"Mixed signals":"Misaligned — the keys contradict each other";
+  const col=avg>=80?'var(--green)':avg>=60?'var(--gold-2)':avg>=40?'var(--blue)':'var(--red)';
+  document.getElementById('k_out').innerHTML=`<div class="row sp" style="align-items:flex-end"><div><div class="tag">Reality Alignment Score</div><div class="serif" style="font-size:40px;color:${col};line-height:1">${avg}<span style="font-size:18px">/100</span></div></div><div class="ring" style="--p:${avg};position:static"><span>${avg}%</span></div></div>
+    <p style="margin:12px 0 0;color:${col};font-weight:600">${label}</p>
+    <p class="mut tiny">Weakest key: <strong class="gold">${KEYS7[minI].k}</strong>. This is the one quietly contradicting your reality — give it focused work next.</p>`;
+}
+function saveKeys(){
+  let o={};KEYS7.forEach((x,i)=>o[x.k]=+document.getElementById('k_'+i).value);
+  S.keys=o;const avg=Math.round(Object.values(o).reduce((a,b)=>a+b,0)/7);S.keys._score=avg;
+  addPoints(10);touchActivity();save();checkAch();toast("&#128273; Alignment saved (+10)");
+}
+
+/* ============ DAILY PRACTICE ============ */
+function renderPractices(){
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    <p class="eyebrow">Consistency is a form of alchemy</p>
+    <h1 class="display">Daily <em>Practice</em></h1>
+    <p class="lead">Four doses of alignment for any amount of time you have. Don't make a chore of it — if it begins to feel like one, take a break and enjoy your reality.</p>
+    <div class="grid g2" style="margin-top:28px">
+      ${PRACTICES.map(p=>`<div class="card">
+        <div class="row sp"><div class="tag" style="color:var(--gold)">${esc(p.tag)}</div><span class="chip gold">${p.mins} min</span></div>
+        <h3 class="serif" style="font-size:21px;margin:10px 0 6px">${esc(p.name)}</h3>
+        <p class="mut tiny" style="margin:0 0 14px">${esc(p.desc)}</p>
+        <ol style="margin:0;padding-left:18px">${p.steps.map(s=>`<li style="margin-bottom:7px;color:var(--muted)">${esc(s)}</li>`).join("")}</ol>
+        <div class="btnrow" style="margin-top:16px"><button class="btn sm primary" onclick="startPractice('${p.id}')">&#9654; Begin &middot; ${p.mins} min</button></div>
+      </div>`).join("")}
+    </div>
+  </div>`;
+}
+function startPractice(id){
+  const p=PRACTICES.find(x=>x.id===id);let i=0;
+  function frame(){
+    openModal(`<div class="center">
+      <div class="steps" style="margin-bottom:18px">${p.steps.map((_,k)=>`<div class="s ${k<i?'done':k===i?'on':''}"></div>`).join("")}</div>
+      <div class="tag">${esc(p.name)} &middot; step ${i+1}/${p.steps.length}</div>
+      <div class="orb breathe" style="margin:16px auto"><div class="tt">${i+1}</div></div>
+      <p class="serif" style="font-size:19px;max-width:40ch;margin:0 auto 22px">${esc(p.steps[i])}</p>
+      <div class="btnrow" style="justify-content:center">
+        ${i>0?`<button class="btn ghost" onclick="window.__pf(${i-1})">Back</button>`:''}
+        ${i<p.steps.length-1?`<button class="btn primary" onclick="window.__pf(${i+1})">Next</button>`:`<button class="btn primary" onclick="finishPractice()">Complete</button>`}
+      </div></div>`);
+  }
+  window.__pf=function(k){i=k;frame();};
+  window.__pfFin=p;frame();
+}
+function finishPractice(){addPoints(10);touchActivity();save();checkAch();renderSidebar();closeModal();toast("&#9728; Practice complete (+10)");}
+
+/* ============ DAILY COACH ============ */
+function renderCoach(){
+  const q=COACH[(S.coachIdx||0)%COACH.length];
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    <p class="eyebrow">Your AI-style coach, grounded in the book</p>
+    <h1 class="display">Daily <em>Coach</em></h1>
+    <p class="lead">A question a day to keep the awareness at the top of your mind. The more you bring this awareness up, the more you naturally stay above the noise.</p>
+    <div class="hero" style="margin-top:26px">
+      <div class="greet">Today's question</div>
+      <h2 style="font-size:27px;max-width:26ch">${esc(q)}</h2>
+      <textarea class="input" id="coach_ans" placeholder="Answer honestly — you can lie to others, never to the universe." style="margin-top:16px;background:rgba(0,0,0,.25)"></textarea>
+      <div class="btnrow" style="margin-top:14px"><button class="btn primary" onclick="saveCoach()">Save reflection</button><button class="btn ghost" onclick="nextCoach()">New question &rarr;</button></div>
+    </div>
+    <h2 class="sec">The Reframer &middot; Default vs Design</h2>
+    <div class="card glass">
+      <p class="mut" style="margin:0">Reacting leads to the old frequency; responding leads to the new. Drop in any situation and see it through the lens of your desired-reality self.</p>
+      <label class="fld">What situation are you facing?</label>
+      <textarea class="input" id="rf_in" placeholder="e.g. A client went quiet and I'm spiralling."></textarea>
+      <div class="btnrow" style="margin-top:12px"><button class="btn primary" onclick="reframe()">Reframe by design</button></div>
+      <div id="rf_out"></div>
+    </div>
+  </div>`;
+}
+function saveCoach(){const a=val('coach_ans');if(!a){toast("Write a reflection first");return;}S.journal.unshift({id:uid(),prompt:COACH[(S.coachIdx||0)%COACH.length],text:a,ts:Date.now()});addPoints(5);touchActivity();save();checkAch();toast("&#128221; Reflection saved (+5)");nextCoach();}
+function reframe(){
+  const s=val('rf_in');if(!s){toast("Describe the situation");return;}
+  document.getElementById('rf_out').innerHTML=`<div class="divider"></div>
+    <div class="callout"><div class="lab">By design — the desired-reality lens</div>
+    <p style="margin:0 0 10px">Hold the situation and answer, as the version of you already living your desired reality:</p>
+    <ul class="applist" style="margin:0">
+      <li>How would the version of me in my desired reality <strong>look</strong> at this?</li>
+      <li>How would they <strong>feel</strong> about it?</li>
+      <li>How would they <strong>think</strong> about it?</li>
+      <li>What's the hidden <strong>seed</strong> here that serves where I'm going?</li>
+      <li>What single <strong>response</strong> (not reaction) would they choose now?</li>
+    </ul></div>
+    <div class="btnrow"><button class="btn sm" onclick="saveReframe(\`${esc(s).replace(/[`$]/g,'')}\`)">Save this as a journal entry</button></div>`;
+}
+function saveReframe(s){S.journal.unshift({id:uid(),prompt:"Reframed by design: "+s,text:"(Answer the five design questions in your own words.)",ts:Date.now()});addPoints(5);touchActivity();save();checkAch();toast("&#128221; Saved to journal");}
+
+/* ============ JOURNAL ============ */
+function renderJournal(){
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    <p class="eyebrow">Seeing things not yet seen, as if seen</p>
+    <h1 class="display">Reflection <em>Journal</em></h1>
+    <p class="lead">Everything starts as a thought before it becomes visible. Capture the shifts as they happen.</p>
+    <div class="card glass" style="margin-top:24px">
+      <label class="fld">New entry</label>
+      <textarea class="input" id="j_new" placeholder="Write freely…" style="min-height:120px"></textarea>
+      <div class="btnrow" style="margin-top:12px"><button class="btn primary" onclick="addJournal()">Save entry</button></div>
+    </div>
+    <h2 class="sec">Entries <span class="tiny fa">(${S.journal.length})</span></h2>
+    ${S.journal.length?S.journal.map(j=>`<div class="card" style="margin-bottom:12px">
+      ${j.prompt?`<div class="tag" style="color:var(--gold)">${esc(j.prompt)}</div>`:''}
+      <p style="margin:10px 0 8px;white-space:pre-wrap">${esc(j.text)}</p>
+      <div class="row sp"><span class="tiny fa">${new Date(j.ts).toLocaleString()}</span><button class="del" onclick="delJournal('${j.id}')">&times;</button></div>
+    </div>`).join(""):`<div class="empty"><div class="ico">&#128221;</div>No entries yet. Begin with a lesson prompt or the daily coach.</div>`}
+  </div>`;
+}
+function addJournal(){const t=val('j_new');if(!t){toast("Write something first");return;}S.journal.unshift({id:uid(),prompt:"",text:t,ts:Date.now()});addPoints(5);touchActivity();save();checkAch();toast("&#128221; Entry saved (+5)");renderJournal();}
+function delJournal(id){S.journal=S.journal.filter(j=>j.id!==id);save();renderJournal();}
+
+/* ============ INSIGHT LIBRARY ============ */
+function buildLibrary(){
+  let cards=[];
+  LESSONS.forEach(l=>{
+    cards.push({cat:"Principle",chapter:l.chapter,lesson:l.id,title:l.title,body:l.principle});
+    cards.push({cat:"Mental Model",chapter:l.chapter,lesson:l.id,title:l.model.name,body:l.model.body});
+    cards.push({cat:"Quote",chapter:l.chapter,lesson:l.id,title:l.chapter,body:'"'+l.quote.text+'" — '+l.quote.cite});
+    cards.push({cat:"Behaviour",chapter:l.chapter,lesson:l.id,title:l.title,body:l.behavior});
+  });
+  return cards;
+}
+let LIB=buildLibrary();
+function renderLibrary(){
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    <p class="eyebrow">Every lesson, framework & quote</p>
+    <h1 class="display">Insight <em>Library</em></h1>
+    <p class="lead">Searchable distillation of the whole book — principles, mental models, quotes, and behaviour changes.</p>
+    <div class="searchwrap" style="margin-top:24px"><span class="si">&#128269;</span><input class="search" id="lib_q" placeholder="Search frequency, conviction, beliefs, emotion…" oninput="filterLib()"></div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin:8px 0 18px" id="lib_cats">
+      ${["All","Principle","Mental Model","Quote","Behaviour"].map((c,i)=>`<span class="chip ${i===0?'gold':''}" onclick="libCat('${c}',this)">${c}</span>`).join("")}
+    </div>
+    <div class="grid g2" id="lib_grid"></div>
+  </div>`;
+  TW={cat:"All",q:""};filterLib();
+}
+function libCat(c,el){TW.cat=c;document.querySelectorAll('#lib_cats .chip').forEach(x=>x.classList.remove('gold'));el.classList.add('gold');filterLib();}
+function filterLib(){
+  const q=(document.getElementById('lib_q')?document.getElementById('lib_q').value:"").toLowerCase();TW.q=q;
+  let items=LIB.filter(c=>(TW.cat==="All"||c.cat===TW.cat)&&(!q||(c.title+c.body+c.chapter).toLowerCase().includes(q)));
+  const g=document.getElementById('lib_grid');
+  g.innerHTML=items.length?items.map(c=>`<div class="lib-card" onclick="go('lesson','${c.lesson}')">
+    <div class="cat">${c.cat} &middot; ${esc(c.chapter)}</div>
+    <h4>${esc(c.title)}</h4><p>${esc(c.body)}</p></div>`).join(""):`<div class="empty"><div class="ico">&#128269;</div>Nothing matches "${esc(q)}".</div>`;
+}
+
+/* ============ MASTERY CHALLENGES ============ */
+function renderChallenges(){
+  document.getElementById('main').innerHTML=`<div class="wrap view">
+    <p class="eyebrow">Build the muscle over time</p>
+    <h1 class="display">Mastery <em>Challenges</em></h1>
+    <p class="lead">Structured commitments — 7, 14, 30, and 90 days. Manifestation works like building muscle: start with smaller wins, then work your way up.</p>
+    <div class="grid g2" style="margin-top:26px">
+      ${CHALLENGES.map(c=>{
+        const st=S.challenges[c.id];
+        const doneN=st?st.days.filter(Boolean).length:0;
+        const pct=st?Math.round(doneN/c.days*100):0;
+        return `<div class="card">
+          <div class="row sp"><div class="tag" style="color:var(--gold)">${c.days} days &middot; ${esc(c.focus)}</div>${st&&st.complete?'<span class="chip green">&#10003; Complete</span>':''}</div>
+          <h3 class="serif" style="font-size:21px;margin:10px 0 6px">${esc(c.name)}</h3>
+          <p class="mut tiny" style="margin:0 0 8px">${esc(c.desc)}</p>
+          <div class="callout" style="margin:8px 0"><div class="lab">Daily action</div>${esc(c.daily)}</div>
+          ${st?`<div class="row" style="gap:12px;margin:6px 0"><div class="lbar" style="flex:1;max-width:none"><i style="width:${pct}%"></i></div><span class="tiny fa">${doneN}/${c.days}</span></div>
+            <div class="dots">${st.days.map((d,i)=>`<div class="d ${d?'on':''} ${i===doneN&&!d?'today':''}" onclick="markChallenge('${c.id}',${i})" title="Day ${i+1}">${i+1}</div>`).join("")}</div>
+            <button class="btn sm ghost" onclick="resetChallenge('${c.id}')">Reset challenge</button>`
+          :`<div class="btnrow" style="margin-top:8px"><button class="btn sm primary" onclick="startChallenge('${c.id}')">Start the ${c.days}-day challenge</button></div>`}
+        </div>`;
+      }).join("")}
+    </div>
+  </div>`;
+}
+function startChallenge(id){const c=CHALLENGES.find(x=>x.id===id);S.challenges[id]={start:today(),days:new Array(c.days).fill(false),complete:false};save();toast("&#127919; Challenge started");renderChallenges();}
+function markChallenge(id,i){
+  const st=S.challenges[id];if(!st)return;
+  st.days[i]=!st.days[i];
+  st.complete=st.days.every(Boolean);
+  if(st.days[i]){addPoints(5);touchActivity();}
+  if(st.complete){addPoints(50);toast("&#127942; Challenge complete! (+50)");}
+  save();checkAch();renderSidebar();renderChallenges();
+}
+function resetChallenge(id){delete S.challenges[id];save();renderChallenges();}
+
+/* ============ RENDER DISPATCH ============ */
+function render(){
+  renderSidebar();
+  const v=VIEW.name;
+  if(v==="dashboard")renderDashboard();
+  else if(v==="journey")renderJourney();
+  else if(v==="level")renderLevel(VIEW.param);
+  else if(v==="lesson")renderLesson(VIEW.param);
+  else if(v==="lab")renderLab();
+  else if(v==="tool")renderTool(VIEW.param);
+  else if(v==="practices")renderPractices();
+  else if(v==="coach")renderCoach();
+  else if(v==="journal")renderJournal();
+  else if(v==="library")renderLibrary();
+  else if(v==="challenges")renderChallenges();
+  else if(v==="progress")renderProgress();
+  else renderDashboard();
+}
+
+/* ============ INIT ============ */
+function welcome(){
+  openModal(`<div class="center">
+    <div style="font-size:32px">&#10024;</div>
+    <h2 class="serif" style="font-size:26px;margin:10px 0 6px">Welcome to your Companion</h2>
+    <p class="mut" style="max-width:42ch;margin:0 auto 16px">This is not a summary of <em>Outsmarting Reality</em> — it's a system for living it. Six levels, six interactive tools, daily practice, a coach, and a journal that tracks your transformation.</p>
+    <p class="mut tiny" style="max-width:40ch;margin:0 auto 18px">${LOCAL_MODE?"Everything saves privately on this device.":"Your progress syncs securely to your account across every device."} The book will do no more for you than you allow it to.</p>
+    <div class="btnrow" style="justify-content:center"><button class="btn primary" onclick="closeWelcome(true)">Set my desired reality</button><button class="btn ghost" onclick="closeWelcome(false)">Explore first</button></div>
+  </div>`);
+}
+function closeWelcome(setIt){S.seenIntro=true;save();closeModal();if(setIt)setDesire();}
+
+/* ============ AUTH + BOOT ============ */
+let AUTH_MODE="signin";
+function showAuth(){document.getElementById('authwrap').style.display='flex';document.querySelector('.app').style.display='none';}
+function hideAuth(){document.getElementById('authwrap').style.display='none';document.querySelector('.app').style.display='grid';}
+function authToggle(){
+  AUTH_MODE=AUTH_MODE==="signin"?"signup":"signin";
+  const signup=AUTH_MODE==="signup";
+  document.getElementById('auth_title').textContent=signup?"Create your account":"Welcome back";
+  document.getElementById('auth_sub').textContent=signup?"Start your journey. Your progress syncs across every device.":"Sign in to continue your journey. Your progress syncs across every device.";
+  document.getElementById('auth_submit').textContent=signup?"Create account":"Sign in";
+  document.getElementById('auth_pw').setAttribute('autocomplete',signup?'new-password':'current-password');
+  document.getElementById('auth_switch').innerHTML=signup?`Already have an account? <a onclick="authToggle()">Sign in</a>`:`New here? <a onclick="authToggle()">Create an account</a>`;
+  authMsg("");
+}
+function authMsg(t,ok){const el=document.getElementById('auth_msg');el.className="authmsg"+(t?(ok?" ok":" err"):"");el.textContent=t;}
+function fbErr(e){
+  const c=(e&&e.code)||"";
+  if(c.indexOf("email-already-in-use")>=0)return "That email already has an account — try signing in.";
+  if(c.indexOf("invalid-email")>=0)return "That doesn't look like a valid email.";
+  if(c.indexOf("weak-password")>=0)return "Password should be at least 6 characters.";
+  if(c.indexOf("wrong-password")>=0||c.indexOf("invalid-credential")>=0)return "Incorrect email or password.";
+  if(c.indexOf("user-not-found")>=0)return "No account with that email yet — create one below.";
+  if(c.indexOf("too-many-requests")>=0)return "Too many attempts. Please wait a moment and try again.";
+  if(c.indexOf("popup-closed")>=0||c.indexOf("cancelled-popup")>=0)return "Sign-in was cancelled.";
+  if(c.indexOf("popup-blocked")>=0)return "Your browser blocked the popup — allow popups and try again.";
+  if(c.indexOf("network")>=0)return "Network error. Check your connection.";
+  if(c.indexOf("operation-not-allowed")>=0)return "This sign-in method isn't enabled yet in Firebase.";
+  return (e&&e.message)||"Something went wrong. Please try again.";
+}
+async function authSubmit(){
+  const email=document.getElementById('auth_email').value.trim();
+  const pw=document.getElementById('auth_pw').value;
+  if(!email||!pw){authMsg("Enter your email and password.");return;}
+  const btn=document.getElementById('auth_submit');btn.disabled=true;btn.textContent="Please wait…";
+  try{
+    if(AUTH_MODE==="signup") await fbAuth.createUserWithEmailAndPassword(email,pw);
+    else await fbAuth.signInWithEmailAndPassword(email,pw);
+    /* onAuthStateChanged handles the rest */
+  }catch(e){authMsg(fbErr(e));}
+  btn.disabled=false;btn.textContent=AUTH_MODE==="signup"?"Create account":"Sign in";
+}
+async function googleSignIn(){
+  try{const provider=new firebase.auth.GoogleAuthProvider();await fbAuth.signInWithPopup(provider);}
+  catch(e){authMsg(fbErr(e));}
+}
+async function signOut(){try{await cloudSave();}catch(e){}try{await fbAuth.signOut();}catch(e){}CURRENT_USER=null;location.reload();}
+
+let BOOTED=false;
+async function bootApp(user){
+  if(BOOTED)return; BOOTED=true;
+  CURRENT_USER=user;
+  S=loadCache(); /* instant paint from cache */
+  if(fbDb){
+    try{
+      const snap=await userDoc().get();
+      if(snap.exists && snap.data() && snap.data().data){S=Object.assign(freshDefault(),snap.data().data);}
+      else{await userDoc().set({data:S,email:user.email||null,updatedAt:new Date().toISOString()},{merge:true});}
+      setSync("saved");
+    }catch(e){setSync("off");}
+  }
+  hideAuth();
+  touchActivity();checkAch();render();
+  if(!S.seenIntro)setTimeout(welcome,400);
+}
+function boot(){
+  if(LOCAL_MODE){
+    S=loadCache();hideAuth();touchActivity();checkAch();render();
+    if(!S.seenIntro)setTimeout(welcome,400);return;
+  }
+  if(!window.firebase||!firebase.initializeApp){showAuth();authMsg("Could not load Firebase. Check your connection and refresh.");return;}
+  try{
+    firebase.initializeApp(CONFIG);
+    fbAuth=firebase.auth();
+    fbDb=firebase.firestore();
+  }catch(e){showAuth();authMsg("Firebase config looks off. Double-check the values from your console.");return;}
+  showAuth(); /* default until auth state resolves */
+  fbAuth.onAuthStateChanged(function(user){
+    if(user){ if(!BOOTED)bootApp(user); }
+    else{ if(BOOTED){CURRENT_USER=null;BOOTED=false;location.reload();} else showAuth(); }
+  });
+}
+boot();
+</script>
+</body>
+</html>
