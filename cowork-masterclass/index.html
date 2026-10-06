@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Cowork Masterclass</title>
+<meta name="description" content="A hands-on masterclass for getting started with Cursor, with real screenshots, guided projects, and quizzes.">
+<style>
+:root{
+  --bg:#f5f2ea; --panel:#fbfaf6; --ink:#16181b; --muted:#666a70; --line:#dedacd;
+  --accent:#d8432a; --accent-ink:#fff; --soft:#f0e9d9; --ok:#1f7a4d; --okbg:#e3f1e8;
+  --warn:#8a5a00; --warnbg:#fbf0d4; --code:#ece7d9; --shadow:0 1px 2px rgba(20,20,20,.06),0 12px 32px -12px rgba(20,20,20,.18);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121315; --panel:#191b1e; --ink:#ecebe6; --muted:#9a9da3; --line:#2c2f34;
+  --accent:#ff6a4d; --accent-ink:#17110f; --soft:#22252a; --ok:#6fd3a0; --okbg:#17281f;
+  --warn:#f0c264; --warnbg:#2b2413; --code:#23262b; --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -12px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --bg:#121315; --panel:#191b1e; --ink:#ecebe6; --muted:#9a9da3; --line:#2c2f34;
+  --accent:#ff6a4d; --accent-ink:#17110f; --soft:#22252a; --ok:#6fd3a0; --okbg:#17281f;
+  --warn:#f0c264; --warnbg:#2b2413; --code:#23262b; --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -12px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--accent)}
+kbd{font:600 .8em var(--mono);background:var(--panel);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:.1em .45em;white-space:nowrap}
+code{font:.88em var(--mono);background:var(--code);padding:.12em .38em;border-radius:4px}
+
+/* layout */
+.app{display:grid;grid-template-columns:320px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;overflow:auto;border-right:1px solid var(--line);background:var(--panel);padding:22px 16px 28px;display:flex;flex-direction:column;gap:18px}
+.brand{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0 6px;text-align:left}
+.brand .mark{width:30px;height:30px;border-radius:7px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font:700 15px var(--mono)}
+.brand b{font:600 1.05rem var(--serif);letter-spacing:.01em}
+.brand small{display:block;color:var(--muted);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}
+.meter{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.meter .row{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;color:var(--muted)}
+.meter .row b{font:600 1.5rem var(--serif);color:var(--ink)}
+.bar{height:6px;border-radius:9px;background:var(--line);margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:9px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.nav h5{margin:14px 8px 6px;font:600 .7rem var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between}
+.nav button{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:7px 8px;font-size:.9rem;line-height:1.35}
+.nav button:hover{background:var(--soft)}
+.nav button.on{background:var(--ink);color:var(--bg)}
+.dot{flex:none;width:17px;height:17px;margin-top:1px;border-radius:50%;border:1.5px solid var(--muted);display:grid;place-items:center;font-size:10px;line-height:1}
+.done .dot{background:var(--ok);border-color:var(--ok);color:var(--panel)}
+.done .dot::after{content:"✓"}
+.nav button.quiz .dot{border-radius:4px}
+.sidefoot{margin-top:auto;display:flex;flex-direction:column;gap:8px;font-size:.8rem;color:var(--muted)}
+.sidefoot button{background:none;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:.82rem;text-align:left}
+.sidefoot button:hover{border-color:var(--ink)}
+.who{padding:0 4px}
+
+main{min-width:0}
+.top{display:none;position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 16px;align-items:center;gap:12px}
+.top button{background:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.top .bar{flex:1;margin:0}
+.page{max-width:820px;margin:0 auto;padding:56px 32px 96px}
+.eyebrow{font:600 .74rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{font:600 clamp(2rem,4.6vw,3.1rem)/1.1 var(--serif);margin:.3em 0 .35em;letter-spacing:-.01em;text-wrap:balance}
+h2{font:600 1.6rem/1.2 var(--serif);margin:0 0 .3em}
+h3{font:600 1.28rem/1.25 var(--serif);margin:2.1em 0 .5em}
+h4{font:600 1rem var(--sans);margin:0 0 .3em}
+.meta{color:var(--muted);font-size:.88rem;display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+.lede{font:1.18rem/1.6 var(--serif);color:var(--ink)}
+.small{font-size:.86rem;color:var(--muted)}
+ul,ol{padding-left:1.25em}
+li{margin:.35em 0}
+
+/* hero */
+.hero{border-bottom:1px solid var(--line);padding-bottom:34px;margin-bottom:34px}
+.hero p{font:1.2rem/1.6 var(--serif);max-width:60ch;color:var(--muted)}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:12px 20px;font-weight:650;text-decoration:none;display:inline-block}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--ink);filter:none}
+.btn:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:30px 0 0}
+.stats div{background:var(--panel);padding:14px 16px}
+.stats b{display:block;font:600 1.5rem var(--serif)}
+.stats span{font-size:.78rem;color:var(--muted)}
+.mods{display:grid;gap:12px}
+.mod{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;width:100%}
+.mod:hover{border-color:var(--ink);box-shadow:var(--shadow)}
+.mod .n{font:600 2rem var(--serif);color:var(--accent);width:1.4em}
+.mod p{margin:.15em 0 0;color:var(--muted);font-size:.92rem}
+.mod .pc{font:600 .8rem var(--mono);color:var(--muted)}
+
+/* lesson blocks */
+.shot{margin:26px 0}
+.shot.narrow .frame{display:inline-block;max-width:100%}.shot.narrow img{width:auto;max-width:100%}
+.frame{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;box-shadow:var(--shadow);cursor:zoom-in}
+.frame img{display:block;width:100%;height:auto}
+figcaption{font-size:.86rem;color:var(--muted);margin-top:9px;padding-left:12px;border-left:2px solid var(--accent)}
+.steps{counter-reset:s;list-style:none;padding:0;margin:18px 0}
+.steps li{counter-increment:s;position:relative;padding:10px 0 10px 46px;border-top:1px solid var(--line);margin:0}
+.steps li:last-child{border-bottom:1px solid var(--line)}
+.steps li::before{content:counter(s);position:absolute;left:4px;top:10px;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font:600 .82rem var(--mono)}
+.prompt{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--panel)}
+.prompt-h{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 6px 14px;border-bottom:1px solid var(--line);font:600 .7rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.copy{background:none;border:1px solid var(--line);border-radius:6px;padding:2px 10px;font:600 .72rem var(--sans);letter-spacing:0;text-transform:none}
+.copy:hover{border-color:var(--ink)}
+.prompt pre{margin:0;padding:14px;font:.9rem/1.55 var(--mono);white-space:pre-wrap;word-break:break-word}
+.note{border-radius:12px;padding:14px 16px;margin:20px 0;background:var(--okbg);border:1px solid transparent}
+.note b{font:600 .72rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ok)}
+.note p{margin:.25em 0 0}
+.note.warn{background:var(--warnbg)}.note.warn b{color:var(--warn)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+.cols.three{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card p{margin:0;font-size:.92rem;color:var(--muted)}
+.tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:.92rem;background:var(--panel)}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+.loop{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0}
+.loop span{background:var(--ink);color:var(--bg);border-radius:99px;padding:6px 16px;font:600 .85rem var(--mono)}
+.loop i{color:var(--muted);font-style:normal}
+details.coder{border:1px dashed var(--line);border-radius:12px;padding:0 16px;margin:20px 0;background:var(--panel)}
+details.coder summary{cursor:pointer;padding:12px 0;font:600 .78rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+details.coder[open]{padding-bottom:12px}
+pre.code{background:var(--code);border-radius:10px;padding:14px;font:.84rem/1.55 var(--mono);overflow-x:auto;white-space:pre}
+.next{display:block;border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:var(--panel);margin-top:28px;text-decoration:none;color:var(--ink)}
+.next:hover{border-color:var(--ink)}.next b{font:600 1.1rem var(--serif)}.next span{display:block;color:var(--muted);font-size:.9rem}
+
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:48px;padding-top:24px;border-top:1px solid var(--line)}
+.btn.done-btn.is{background:var(--okbg);color:var(--ok)}
+
+/* quiz */
+.q{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0}
+.q h4{font:600 1.05rem/1.4 var(--serif);margin-bottom:12px}
+.q label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin:8px 0;cursor:pointer}
+.q label:hover{border-color:var(--ink)}
+.q input{margin-top:5px;accent-color:var(--accent)}
+.q label.right{background:var(--okbg);border-color:var(--ok)}
+.q label.wrong{background:var(--warnbg);border-color:var(--warn)}
+.q .why{display:none;font-size:.9rem;color:var(--muted);margin-top:10px}
+.q.graded .why{display:block}
+.result{border-radius:14px;padding:20px;margin:20px 0;background:var(--okbg);display:none}
+.result.show{display:block}.result.fail{background:var(--warnbg)}
+.result b{font:600 1.5rem var(--serif)}
+.cert{text-align:center;border:1px solid var(--line);border-radius:18px;padding:44px 24px;background:var(--panel);box-shadow:var(--shadow);margin:24px 0}
+.cert h2{font-size:2rem}
+
+.lightbox{position:fixed;inset:0;background:rgba(10,10,10,.86);display:none;place-items:center;z-index:50;padding:20px;cursor:zoom-out}
+.lightbox.show{display:grid}
+.lightbox img{max-width:100%;max-height:100%;border-radius:10px}
+.scrim{display:none}
+
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;z-index:20;width:min(320px,86vw);transform:translateX(-102%);transition:transform .25s}
+  .side.open{transform:none;box-shadow:var(--shadow)}
+  .scrim.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:15}
+  .top{display:flex}
+  .page{padding:32px 16px 72px}
+  .cols,.cols.three{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .mod{grid-template-columns:auto 1fr}.mod .pc{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="side">
+    <button class="brand" id="home"><span class="mark">&gt;_</span><span><b>Claude Cowork Masterclass</b><small>Knowledge Athlete</small></span></button>
+    <div class="meter"><div class="row"><span>Your progress</span><b id="pct">0%</b></div><div class="bar"><i id="bar"></i></div><div class="row" style="margin-top:8px"><span id="count"></span><span id="sync">Saved on this device</span></div></div>
+    <nav class="nav" id="nav" aria-label="Lessons"></nav>
+    <div class="sidefoot">
+      <div class="who" id="who"></div>
+      <button id="auth" hidden>Sign in with Google to sync</button>
+      <button id="theme">Switch light / dark</button>
+      <button id="reset">Reset my progress</button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <main>
+    <div class="top"><button id="menu" aria-label="Open lesson menu">Menu</button><div class="bar"><i id="bar2"></i></div><b id="pct2">0%</b></div>
+    <div class="page" id="page"></div>
+  </main>
+</div>
+<div class="lightbox" id="lb"><img alt=""></div>
+
+<script>
+/* Optional cloud sync. Paste your Firebase web config here (or define window.KA_FIREBASE_CONFIG
+   before this script) to turn on Google sign-in and synced progress. Leave null to save on-device only. */
+window.CM_FIREBASE_CONFIG = window.KA_FIREBASE_CONFIG || null;
+const FILES = {"cowork-practice-folder.zip": "data:application/zip;base64,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"};
+const PRACTICE_ZIP = Object.values(FILES)[0];
+</script>
+<script>
+const IMG={};
+/* Claude Cowork Masterclass, Level 1 */
+const prompt = (t) =>
+  `<div class="prompt"><div class="prompt-h"><span>Prompt</span><button class="copy" type="button">Copy</button></div><pre>${t}</pre></div>`;
+const tip = (t) => `<aside class="note"><b>Tip</b><p>${t}</p></aside>`;
+const warn = (t) => `<aside class="note warn"><b>Heads up</b><p>${t}</p></aside>`;
+const steps = (a) => `<ol class="steps">${a.map((s) => `<li>${s}</li>`).join("")}</ol>`;
+const kbd = (k) => `<kbd>${k}</kbd>`;
+const code = (t) => `<pre class="code">${t.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</pre>`;
+const dl = (label) => `<a download="cowork-practice-folder.zip" href="${FILES["cowork-practice-folder.zip"]}">${label}</a>`;
+
+const COURSE = {
+  checked: "October 2026",
+  meta: {
+    id: "cowork-masterclass", key: "cowork-masterclass-v1", title: "the Claude Cowork Masterclass",
+    eyebrow: "A Knowledge Athlete masterclass · Level 1",
+    h1: "Learn Claude Cowork by handing off real work.",
+    intro: "A hands-on course for students and working professionals. You will take one messy project folder and turn it into organized files, a one page brief, a clean budget workbook, and a research memo, by describing the outcome and reviewing the result.",
+    stat: ["4", "real deliverables"],
+    downloads: [{ file: "cowork-practice-folder.zip", label: "Download practice folder" }],
+    note: "Plans, labels, and features checked against Anthropic's help center in October 2026. Cowork changes often, so labels may move. This is an independent course and is not produced by Anthropic.",
+  },
+  modules: [
+    {
+      id: "m1", title: "Get oriented",
+      blurb: "What Cowork is, how to set it up, and where it is allowed to work.",
+      lessons: [
+        {
+          id: "l1", title: "What Cowork is", mins: 5,
+          body: `
+<p class="lede">Chat answers questions. Cowork does the work. You describe a finished result, Claude plans the steps, carries them out across your files and tools, and hands back something you can open.</p>
+<h3>Chat, Cowork, or Code?</h3>
+<p>Claude comes in three working styles. Picking the right one is the first skill.</p>
+<div class="cols three">
+  <div class="card"><h4>Chat</h4><p>For anything that fits in a few exchanges: a question, an explanation, a brainstorm, a second opinion.</p></div>
+  <div class="card"><h4>Cowork</h4><p>For a deliverable: a document, a spreadsheet, a deck, an organized folder. Anything with several steps, files, or apps.</p></div>
+  <div class="card"><h4>Claude Code</h4><p>For developers building software in a code base.</p></div>
+</div>
+<p>A quick test: if you would hand the job to an assistant and expect a file back, it is a Cowork task.</p>
+<h3>What Cowork can do</h3>
+<ul>
+<li><b>Work with your files.</b> Read a folder, organize and rename files, and save new ones beside them.</li>
+<li><b>Produce real documents.</b> Reports, spreadsheets with working formulas, and slide decks.</li>
+<li><b>Research.</b> Search the web, read sources, and pull the findings together.</li>
+<li><b>Use your tools.</b> With connectors, it can work with apps such as email, calendar, and cloud storage.</li>
+<li><b>Run on a schedule.</b> Repeat a task daily or weekly without you starting it.</li>
+</ul>
+<h3>The project you will work on</h3>
+<p>Riverside Coffee is planning a six week pop-up at a farmers market. The practice folder holds what a real project leaves behind: three sets of meeting notes with unhelpful file names, a messy expense export, vendor quotes, and survey results. Over this course you will turn that pile into finished work.</p>
+<p>${dl("Download the practice folder here")} and unzip it. You will connect it in Lesson 3.</p>
+${warn("Cowork takes real actions on real files. That is the point, and it is also why this course spends as much time on reviewing work as on requesting it.")}
+<p class="small">Facts about plans, labels, and features in this course were checked against Anthropic's help center in October 2026. Cowork changes often, so a label may differ slightly in your app.</p>`,
+        },
+        {
+          id: "l2", title: "Get set up", mins: 6,
+          body: `
+<p class="lede">Cowork lives inside the Claude app you may already use. Setup is mostly a matter of switching it on and telling it what you do.</p>
+<h3>What you need</h3>
+<ul>
+<li><b>A paid Claude plan.</b> Cowork is available on Pro, Max, Team, and Enterprise plans. It is not part of the free plan.</li>
+<li><b>The Claude desktop app</b> for Mac or Windows, from claude.com. Cowork also runs on the web and mobile on most paid plans, but working with folders on your computer needs the desktop app.</li>
+</ul>
+<h3>Switch to Cowork</h3>
+${steps([
+  "Open the Claude desktop app and sign in.",
+  "On the home screen, find the message box. Chat and Cowork share it.",
+  "Use the mode picker at the lower left of the message box and select <b>Cowork</b>.",
+  "To go back to ordinary conversation at any time, select <b>Chat</b>.",
+])}
+<h3>Run the guided setup</h3>
+<p>Type this into the message box and press ${kbd("Enter")}:</p>
+${prompt("/setup-cowork")}
+<p>Claude walks you through three things: picking your role, installing a plugin that matches it, and connecting the tools you use. New users also see a setup banner that starts the same flow. You can run it again whenever you like.</p>
+${tip("You can skip connecting tools for now. Nothing in Modules 1 to 3 needs them. You will meet connectors in Lesson 10.")}
+<h3>A word on usage</h3>
+<p>Cowork tasks use far more of your plan's allowance than chat, because each one involves many steps. Keep simple questions in Chat, and check where you stand under <b>Settings &rarr; Usage</b>.</p>`,
+        },
+        {
+          id: "l3", title: "Give Cowork a place to work", mins: 7,
+          body: `
+<p class="lede">Cowork can only see what you show it. Before any task, you choose where it works. That choice is your most important safety control.</p>
+<h3>Connect the practice folder</h3>
+${steps([
+  "Make sure you are in <b>Cowork</b> mode in the desktop app.",
+  "In the message box, select <b>Work in a folder</b>.",
+  "Choose the <code>riverside-popup</code> folder you unzipped in Lesson 1.",
+  "Approve the access request if your computer asks.",
+])}
+<p>From now on Cowork can read the files in that folder and save new ones beside them. It cannot see the rest of your computer.</p>
+<h3>Folder or Project?</h3>
+<div class="cols">
+  <div class="card"><h4>A folder</h4><p>A folder on your computer. Cowork reads what is there and saves results into it. Best when the files already live on your machine.</p></div>
+  <div class="card"><h4>A Project</h4><p>A workspace inside Claude with its own files, instructions, and memory across sessions. Best for ongoing work you return to.</p></div>
+</div>
+<h3>Check that it worked</h3>
+<p>Send a request that changes nothing:</p>
+${prompt("List the files in this folder and tell me in one line what each one contains. Do not change anything.")}
+<p>You should get seven files back, including three sets of meeting notes, an expense export, vendor quotes in a file called <code>Untitled.txt</code>, and survey responses.</p>
+<h3>Four folder habits</h3>
+<ul>
+<li><b>Connect the smallest folder that does the job.</b> One project folder, not your whole Documents folder.</li>
+<li><b>Keep a copy of anything you cannot afford to lose</b> before asking for changes to it.</li>
+<li><b>Leave sensitive files out.</b> Tax records, IDs, and passwords do not belong in a working folder.</li>
+<li><b>Keep the desktop app open.</b> Work on local files only happens while it is running.</li>
+</ul>
+${tip("“Do not change anything” is a complete, useful instruction. Use a read only request like this whenever you connect a new folder, so you know what Cowork can see before it acts.")}`,
+        },
+      ],
+      quiz: [
+        { q: "Which job is the best fit for Cowork rather than Chat?", a: ["Asking what a word means", "Turning a folder of notes into a formatted one page brief", "Getting a quick second opinion on an email subject line", "Brainstorming five names"], c: 1, why: "A multi-step task that ends in a file is a Cowork task. Quick exchanges belong in Chat." },
+        { q: "What decides which files Cowork can see on your computer?", a: ["It can see everything by default", "Only the folder or Project you choose to give it", "Whatever was opened most recently", "Files with “Claude” in the name"], c: 1, why: "Cowork works only where you point it, which is why choosing a small folder matters." },
+        { q: "Why start with “List the files and do not change anything” after connecting a folder?", a: ["It is required before any task", "It confirms what Cowork can see before it takes any action", "It makes later tasks cheaper", "It creates a backup"], c: 1, why: "A read only request is a safe way to check the connection and the contents." },
+        { q: "Which statement about usage is accurate?", a: ["Cowork tasks use about the same allowance as a chat message", "Cowork tasks use much more allowance than chat, so simple questions belong in Chat", "Usage is unlimited on every paid plan", "Usage only counts on mobile"], c: 1, why: "Multi-step work is compute heavy. Check Settings → Usage." },
+      ],
+    },
+    {
+      id: "m2", title: "Delegate well",
+      blurb: "Your first task, what makes a request work, and how to review the result.",
+      lessons: [
+        {
+          id: "l4", title: "Your first task: tidy the folder", mins: 9,
+          body: `
+<p class="lede">The practice folder is a mess on purpose. Your first real task is to have Cowork organize it, and to watch how it asks before acting.</p>
+<h3>Before</h3>
+${code(`riverside-popup/
+  IMG_4471 notes.txt
+  Untitled.txt
+  expenses export.csv
+  logo-old-DELETE.txt
+  meeting notes FINAL v2.txt
+  notes (1).txt
+  survey_responses.csv`)}
+<h3>Ask</h3>
+${prompt(`Organize this folder. Read each file first so the names reflect what is inside.
+
+- Rename the meeting notes to the pattern YYYY-MM-DD-meeting-notes.txt using the date inside each file.
+- Give Untitled.txt a clear name.
+- Put notes in a "notes" folder and data files in a "data" folder.
+- Do not delete anything. If a file looks like it should be deleted, list it and ask me.
+
+Show me your plan before you make changes.`)}
+<h3>Review the plan</h3>
+<p>Cowork replies with what it intends to do. Read it like you would read a colleague's proposal. Check that the three meeting dates are right: September 8, September 15, and September 29. One file only says “9/15”, so see whether Cowork states the year it assumed.</p>
+<h3>Approve the actions</h3>
+<p>How often Cowork stops to ask depends on the approval mode:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Mode</th><th>What happens</th><th>Use it when</th></tr></thead>
+<tbody>
+<tr><td><b>Manual</b></td><td>Claude pauses before each action. You choose <b>Allow</b> or <b>Deny</b>.</td><td>You are learning, or the files matter</td></tr>
+<tr><td><b>Auto</b></td><td>Claude proceeds on its own and runs safety checks as it goes. Risky actions are blocked or sent back to you.</td><td>Routine work in a folder you have backed up</td></tr>
+<tr><td><b>Skip</b></td><td>No checks and no requests.</td><td>Only for workflows you trust completely</td></tr>
+</tbody></table></div>
+<p>Stay on <b>Manual</b> for this course. Seeing each request teaches you what Cowork actually does to complete a task.</p>
+<h3>After</h3>
+<p>Your result should look close to this:</p>
+${code(`riverside-popup/
+  logo-old-DELETE.txt
+  data/
+    expenses export.csv
+    survey_responses.csv
+  notes/
+    2026-09-08-meeting-notes.txt
+    2026-09-15-meeting-notes.txt
+    2026-09-29-meeting-notes.txt
+    vendor-quotes-espresso-machine.txt`)}
+<p>Cowork should have asked about <code>logo-old-DELETE.txt</code> instead of removing it. Permanently deleting a file needs your explicit permission.</p>
+${tip("Open the folder on your computer and look. The files really moved. Checking the result in the real place, not just in Cowork's summary, is a habit to start today.")}`,
+        },
+        {
+          id: "l5", title: "Anatomy of a great task", mins: 8,
+          body: `
+<p class="lede">That first prompt worked because of how it was built. A Cowork request is closer to a short assignment than to a question.</p>
+<h3>Five parts of a strong request</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Part</th><th>Question it answers</th><th>From the last lesson</th></tr></thead>
+<tbody>
+<tr><td><b>Outcome</b></td><td>What should exist when this is done?</td><td>An organized folder</td></tr>
+<tr><td><b>Inputs</b></td><td>What should it read?</td><td>“Read each file first”</td></tr>
+<tr><td><b>Format</b></td><td>What exactly should the result look like?</td><td>The file name pattern and the two folders</td></tr>
+<tr><td><b>Limits</b></td><td>What must it not do?</td><td>“Do not delete anything”</td></tr>
+<tr><td><b>Checkpoint</b></td><td>When should it stop and ask?</td><td>“Show me your plan before you make changes”</td></tr>
+</tbody></table></div>
+<h3>Weak and strong</h3>
+<div class="cols">
+  <div class="card"><h4>Weak</h4><p>“Clean up this folder.”</p></div>
+  <div class="card"><h4>Strong</h4><p>“Rename the meeting notes to YYYY-MM-DD-meeting-notes.txt using the date inside each file. Do not delete anything. Show me your plan first.”</p></div>
+</div>
+<p>The weak version leaves every decision to Claude. It might do something reasonable. It might also delete the file you needed.</p>
+<h3>The alignment line</h3>
+<p>When a task is large or you are unsure how to describe it, add this to the end of your request:</p>
+${prompt("Before we begin, repeat my ask back to me so we're aligned, then ask me as many clarifying questions as you have.")}
+<p>Cowork often answers with a short set of multiple choice questions. Two minutes answering them saves a full run in the wrong direction.</p>
+<h3>What makes a task worth delegating</h3>
+<p>The best Cowork tasks tend to share these traits:</p>
+<ul>
+<li><b>Several inputs.</b> More than one file, folder, or app.</li>
+<li><b>A file at the end.</b> A document, deck, or spreadsheet.</li>
+<li><b>Repeats.</b> You will need it again next week or next month.</li>
+<li><b>You know good when you see it.</b> You can judge the result quickly.</li>
+<li><b>A boring middle.</b> Extracting, compiling, and reformatting that nobody enjoys.</li>
+</ul>
+${tip("Context beats clever wording. A plain request with the right files attached will beat a polished prompt with nothing to work from.")}`,
+        },
+        {
+          id: "l6", title: "Review, steer, and revise", mins: 8,
+          body: `
+<p class="lede">Delegating does not end when you press Enter. The work comes back to you, and you are responsible for it. This lesson is the review routine you will use for everything else in the course.</p>
+<h3>Watch the progress</h3>
+<p>While a task runs, Cowork shows what it is doing: the steps it has planned, which one it is on, and any request waiting for your approval. You do not need to watch every second. Glance at it the way you would glance at a colleague's screen.</p>
+<h3>Steer while it works</h3>
+<p>If you see it heading the wrong way, say so. You do not have to wait for it to finish.</p>
+${prompt("Stop. Use dashes in the file names, not underscores. Fix the ones you have already renamed.")}
+<h3>The three-check review</h3>
+${steps([
+  "<b>Did it do what I asked?</b> Compare the result with your request, line by line.",
+  "<b>Did it do anything I did not ask?</b> Look for extra files, changed files, and anything missing.",
+  "<b>Is it right?</b> Pick one fact, name, or number and check it against the source yourself.",
+])}
+<p>Try the third check now. Open the September 15 notes. Which machine vendor did the owner approve? Confirm that against the vendor quotes file. Thirty seconds, and you know whether the files are what they claim to be.</p>
+<h3>Ask for an account of the work</h3>
+${prompt("List every file you renamed, moved, or created in this task, with the old and new location of each. Flag anything you were unsure about.")}
+<p>“Flag anything you were unsure about” is the most valuable sentence in that prompt. It brings assumptions to the surface, such as a guessed year on a date.</p>
+<h3>Revise, do not restart</h3>
+<p>When something is off, describe the change in the same task. Cowork remembers what it just did.</p>
+${prompt("Rename the vendor quotes file to 2026-09-15-vendor-quotes.txt so it sorts with the meeting it was discussed in.")}
+${warn("A confident summary is not proof. Cowork can report that a task succeeded when a detail is wrong. The summary tells you what it meant to do. The files tell you what happened.")}`,
+        },
+      ],
+      quiz: [
+        { q: "In Manual mode, what happens before Cowork takes an action?", a: ["Nothing, it proceeds", "It pauses and you choose Allow or Deny", "It emails you", "It waits one hour"], c: 1, why: "Manual mode asks for approval on each action." },
+        { q: "Which request is strongest?", a: ["“Clean up this folder.”", "“Make the folder better and delete junk.”", "“Rename the notes to YYYY-MM-DD-meeting-notes.txt using the date inside each file. Do not delete anything. Show me your plan first.”", "“You know what to do.”"], c: 2, why: "It states the outcome, the format, a limit, and a checkpoint." },
+        { q: "What is the purpose of “repeat my ask back to me, then ask clarifying questions”?", a: ["To use more allowance", "To catch misunderstandings before the work starts", "To switch to Chat mode", "To create a backup"], c: 1, why: "Aligning first is far cheaper than redoing a finished task." },
+        { q: "Cowork's summary says the task succeeded. What should you do?", a: ["Trust it and move on", "Open the actual files and check at least one detail against the source", "Run the task again to be sure", "Switch to Skip mode"], c: 1, why: "The summary says what it intended. The files show what happened." },
+        { q: "You notice a mistake while the task is still running. What is the best move?", a: ["Wait until it finishes", "Tell it to stop and describe the correction now", "Close the app", "Delete the folder"], c: 1, why: "You can steer mid-task. Early corrections save work." },
+      ],
+    },
+    {
+      id: "m3", title: "Real deliverables",
+      blurb: "A brief, a budget workbook, and a research memo from the same folder.",
+      lessons: [
+        {
+          id: "l7", title: "Notes into a one page brief", mins: 10,
+          body: `
+<p class="lede">Three meetings, three sets of scattered notes. Someone joining the project needs one page. This is the classic Cowork task: many inputs, one clean output.</p>
+<h3>Ask</h3>
+${prompt(`Read the three meeting notes and the vendor quotes in the notes folder. Write a one page project brief for someone joining the Riverside Coffee pop-up team today.
+
+Sections, in this order:
+1. What we are doing and why (3 sentences at most)
+2. Key decisions made, with the date of each
+3. Open risks
+4. Action items still open, with owner and due date
+5. Budget ceiling and the main committed costs
+
+Only include facts from the files. If the notes contradict each other, use the most recent and note the change. Save it as a Word document called pop-up-brief.docx in this folder.`)}
+<h3>Check it against the answer key</h3>
+<p>You have the source files, so you can grade the result. A correct brief includes all of these:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Fact</th><th>Correct value</th></tr></thead>
+<tbody>
+<tr><td>Schedule</td><td>Six Saturdays at the farmers market, starting October 17</td></tr>
+<tr><td>Sales target</td><td>150 cups per Saturday, with break-even near 95</td></tr>
+<tr><td>Machine vendor</td><td>BrewRent, $1,380, approved September 15</td></tr>
+<tr><td>Payment</td><td>Card only, decided September 29</td></tr>
+<tr><td>Menu</td><td>Five drinks, no food</td></tr>
+<tr><td>Budget ceiling</td><td>$4,000</td></tr>
+<tr><td>Open risks</td><td>No power on the north side of the market. Only one barista confirmed for all six weeks.</td></tr>
+</tbody></table></div>
+<h3>The trap in the notes</h3>
+<p>On September 15, cash or card was an open question. On September 29 it was decided: card only. A careless summary lists it as still open. That is why the prompt says to use the most recent notes and mention the change. Check which version your brief contains.</p>
+<h3>Revise for the reader</h3>
+<p>The first draft is rarely the one you send. Shape it:</p>
+${prompt("Tighten the brief so it fits on one page. Put the two open risks at the top in a short box, since those need attention this week.")}
+${tip("“Only include facts from the files” is the line that keeps a summary honest. Without it, a helpful assistant fills gaps with reasonable sounding guesses.")}`,
+        },
+        {
+          id: "l8", title: "A messy export into a clean workbook", mins: 12,
+          body: `
+<p class="lede">The expense export has every problem real data has: mixed date formats, inconsistent categories, a duplicate, and a missing amount. You will have Cowork clean it and build a budget summary with working formulas.</p>
+<h3>Look before you ask</h3>
+${prompt("Open data/expenses export.csv and describe every data quality problem you find. Do not fix anything yet.")}
+<p>A careful answer finds four:</p>
+<ul>
+<li><b>Dates in three formats.</b> <code>9/10/2026</code>, <code>2026-09-16</code>, and <code>Sept 18 2026</code>.</li>
+<li><b>Categories with inconsistent capitals.</b> <code>Supplies</code>, <code>supplies</code>, and <code>SUPPLIES</code>.</li>
+<li><b>A duplicate.</b> “Cups and lids, 1000 ct” appears twice with the same amount and the same day written two ways.</li>
+<li><b>A missing amount.</b> “Milk and oat milk, week 1” has no figure.</li>
+</ul>
+<h3>Clean and build</h3>
+${prompt(`Create an Excel workbook called pop-up-budget.xlsx in this folder from data/expenses export.csv.
+
+Sheet 1, "Expenses": the cleaned data. Dates as real dates. Categories in consistent capitalization. Remove exact duplicates and tell me which rows you removed. Do not guess missing amounts. Leave them blank and highlight the row.
+
+Sheet 2, "Summary": total spent, spending by category, and the amount left from a $4,000 budget. Use formulas that reference Sheet 1, not typed numbers.
+
+Leave the original CSV untouched.`)}
+<h3>Check the numbers</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Check</th><th>Correct value</th></tr></thead>
+<tbody>
+<tr><td>Rows with an amount, after removing the duplicate</td><td>12</td></tr>
+<tr><td>Total spent</td><td>$3,315.29</td></tr>
+<tr><td>Equipment</td><td>$1,778.99</td></tr>
+<tr><td>Fees</td><td>$585.00</td></tr>
+<tr><td>Supplies</td><td>$553.30</td></tr>
+<tr><td>Marketing</td><td>$398.00</td></tr>
+<tr><td>Left of $4,000</td><td>$684.71</td></tr>
+</tbody></table></div>
+<p>If your total reads $3,447.79, the duplicate is still in. If the milk row is gone or has a number in it, Cowork guessed when you told it not to.</p>
+<h3>Test that the formulas are live</h3>
+${steps([
+  "Open the workbook in Excel, Numbers, or Google Sheets.",
+  "Click the total on the Summary sheet. You should see a formula, not a typed number.",
+  "On the Expenses sheet, type 90 into the blank milk amount.",
+  "The total should change to $3,405.29 on its own.",
+])}
+<p>A summary that updates itself is a tool. A summary with typed numbers is a picture of a tool, and it is wrong the moment the data changes.</p>
+${warn("“Do not guess missing amounts” matters. Asked simply to clean data, an assistant may fill a blank with an estimate or quietly drop the row. Both hide a problem a person needs to see.")}`,
+        },
+        {
+          id: "l9", title: "Research with sources", mins: 10,
+          body: `
+<p class="lede">The team has an open risk: no power at the stall. Someone needs to work out the options. Cowork can search the web, read what it finds, and write it up. Your job is to make sure the result can be trusted.</p>
+<h3>Ask</h3>
+${prompt(`Our coffee pop-up needs to power a commercial espresso machine at an outdoor market stall for 7 hours with no outlet. Research the realistic options, for example a portable generator or a battery power station.
+
+For each option give: typical power output, whether it can run an espresso machine, approximate rental or purchase cost, noise, and anything a farmers market commonly restricts.
+
+Give a source link for every factual claim. Clearly separate what the sources say from your own reasoning. Finish with a recommendation and what we should confirm with the market manager. Save it as power-options-memo.docx.`)}
+<h3>Review research differently</h3>
+<p>For the brief and the budget, you had the source files and an answer key. Here the sources are the open web, so the review changes.</p>
+${steps([
+  "<b>Open at least two of the links.</b> Does the page say what the memo claims it says?",
+  "<b>Check the date.</b> Prices and product details go stale. Is the source recent?",
+  "<b>Check who is speaking.</b> A manufacturer's page will favor its own product.",
+  "<b>Find the reasoning.</b> Which parts are sourced facts and which are Cowork's own conclusions? The prompt asked for that separation. See whether you got it.",
+])}
+<h3>Ask the question a skeptic would ask</h3>
+${prompt("Which claims in this memo are you least sure about, and what would change your recommendation?")}
+<p>This turns a confident document into an honest one. A good answer names specifics, such as the power draw of this particular machine, which the notes never state.</p>
+<h3>Know what it could not know</h3>
+<p>The memo cannot tell you this market's rules, the wattage of the BrewRent machine, or whether a stall swap is possible. Those are questions for people. A strong memo ends by listing them, and a strong reviewer notices when it does not.</p>
+${tip("Treat research output as a well prepared starting point, not a verdict. It saves you the hours of gathering. The judgment is still yours.")}`,
+        },
+      ],
+      quiz: [
+        { q: "The September 15 notes list cash or card as undecided. The September 29 notes say card only. What should the brief say?", a: ["Still undecided", "Card only, decided September 29", "Cash only", "Leave it out"], c: 1, why: "Use the most recent notes. This is the contradiction the prompt told Cowork to resolve." },
+        { q: "Why tell Cowork “only include facts from the files”?", a: ["It makes the task faster", "It stops gaps being filled with plausible guesses", "It is required for Word documents", "It reduces usage"], c: 1, why: "Without it, a summary can include reasonable sounding details that are not in your sources." },
+        { q: "The expense row for milk has no amount. What is the right handling?", a: ["Fill in an estimate", "Delete the row", "Leave it blank and highlight it for a person to resolve", "Enter zero"], c: 2, why: "Guessing or deleting both hide a real gap in the data." },
+        { q: "How do you confirm a spreadsheet summary uses live formulas?", a: ["Ask Cowork if it did", "Change a value in the data and see whether the total updates", "Check the file size", "Count the sheets"], c: 1, why: "A live formula recalculates when its inputs change." },
+        { q: "What is the most important review step for web research?", a: ["Checking the font", "Opening some of the cited sources to confirm they say what the memo claims", "Counting the links", "Making it longer"], c: 1, why: "A link is only evidence if the page actually supports the claim." },
+      ],
+    },
+    {
+      id: "m4", title: "Make it routine",
+      blurb: "Connect your tools, reuse what works, and schedule it. Then stay safe doing so.",
+      lessons: [
+        {
+          id: "l10", title: "Connect your tools", mins: 8,
+          body: `
+<p class="lede">So far Cowork has worked in one folder. Connectors let it work with the apps where the rest of your work lives, such as email, calendar, cloud storage, and team chat.</p>
+<h3>What a connector is</h3>
+<p>A connector is a secure link between Claude and one of your accounts. Once connected, Cowork can read from that app and, if you allow it, act in it.</p>
+<h3>Add one</h3>
+<p>The simplest way is to ask. Run the setup again, or describe what you want:</p>
+${prompt("/setup-cowork")}
+${prompt("I'd like to connect my calendar. What are my options?")}
+<p>Cowork shows the connectors available to your account. Choosing one sends you to that service to sign in and approve access. Read the permission screen. It lists what Claude will be able to see and do.</p>
+<h3>Start with read only tasks</h3>
+<p>Begin with requests that look and report, and change nothing:</p>
+${prompt("Look at my calendar for the next 7 days. List my meetings by day and flag any that overlap. Do not change anything.")}
+${prompt("Find emails from the last week that are waiting on a reply from me. List the sender, the subject, and one line on what they need. Do not send or draft anything yet.")}
+<h3>Then let it prepare, and you send</h3>
+<p>The safe pattern for anything that goes to another person is that Cowork drafts and you review and send.</p>
+${prompt("Draft replies to the three most urgent ones as drafts in my email. Do not send them.")}
+<div class="tablewrap"><table>
+<thead><tr><th>Lower risk</th><th>Higher risk, review first</th></tr></thead>
+<tbody>
+<tr><td>Reading and summarizing</td><td>Sending messages</td></tr>
+<tr><td>Creating drafts</td><td>Deleting or archiving</td></tr>
+<tr><td>Finding free time</td><td>Accepting, declining, or moving meetings</td></tr>
+<tr><td>Saving a new file</td><td>Editing or sharing an existing file</td></tr>
+</tbody></table></div>
+${warn("Connect only what a task needs, and only accounts you are allowed to connect. At work, check your organization's policy first. On Team and Enterprise plans, an administrator may control which connectors and approval modes are available.")}`,
+        },
+        {
+          id: "l11", title: "Skills and plugins", mins: 7,
+          body: `
+<p class="lede">By now you have written a few prompts that work well. Skills and plugins are how good instructions get saved and reused, by you or by anyone else.</p>
+<h3>Skills</h3>
+<p>A skill is a saved set of instructions for one kind of job, such as building a spreadsheet properly or writing in a house style. Claude uses the right skill when a task calls for it, and you can call one directly by typing ${kbd("/")} in the message box.</p>
+<p>You have already used two: <code>/setup-cowork</code> in Lesson 2, and you will use <code>/schedule</code> in the next lesson.</p>
+<h3>Plugins</h3>
+<p>A plugin is a bundle built around a role: a set of skills, and sometimes connectors and helper agents, packaged together. The guided setup installs one that matches the role you pick. A sales plugin, for example, comes with skills for account research and call preparation.</p>
+<h3>See what you have</h3>
+${prompt("What skills and plugins do I have available, and what is each one for?")}
+<h3>Turn your own routine into a skill</h3>
+<p>The review prompt from Lesson 6 is a good candidate, because you will want it after every task. Ask Cowork to save it:</p>
+${prompt(`Turn this into a skill I can reuse, called "account-for-work":
+
+List every file you renamed, moved, created, or changed in this task, with the old and new location of each. Flag anything you were unsure about and any instruction you could not follow exactly.`)}
+<p>Cowork drafts the skill and shows it to you to review and save. After that, it is one short command at the end of any task.</p>
+<h3>When to make a skill</h3>
+<ul>
+<li>You have typed nearly the same instructions three times.</li>
+<li>The task has a standard you care about, such as a format or a checklist.</li>
+<li>Someone else on your team should do it the same way.</li>
+</ul>
+${warn("Skills and plugins contain instructions that Claude will follow, and plugins can come with connections to outside services. Install them only from sources you trust, as you would any app.")}`,
+        },
+        {
+          id: "l12", title: "Scheduled tasks", mins: 8,
+          body: `
+<p class="lede">Some work repeats: a Monday summary, a weekly report, a daily check. A scheduled task runs on its own, at the times you choose, and has the result waiting for you.</p>
+<h3>Create one from a task that works</h3>
+<p>Get the task right by hand first. Then, in that same task, type:</p>
+${prompt("/schedule")}
+<p>Cowork asks a few multiple choice questions about what to run and how often, then shows a <b>Schedule</b> button to confirm.</p>
+<h3>Or set one up manually</h3>
+${steps([
+  "Click <b>Scheduled</b> in the left sidebar.",
+  "Select <b>New task</b> at the upper right, then <b>Set up manually</b>.",
+  "Fill in the task name, a description, and the prompt.",
+  "Choose the frequency: hourly, daily, weekly, on weekdays, or manually.",
+  "Click <b>Save</b>.",
+])}
+<p>The <b>Scheduled</b> page is also where you review past and upcoming runs, edit a task, pause or resume it, run it on demand, and delete it.</p>
+<h3>Write the prompt for a run with nobody there</h3>
+<p>A scheduled run starts fresh each time and you are not there to answer questions. The prompt has to stand on its own.</p>
+<div class="cols">
+  <div class="card"><h4>Weak</h4><p>“Do my Monday summary like last time.”</p></div>
+  <div class="card"><h4>Strong</h4><p>“Look at my calendar for the coming week. List meetings by day, flag overlaps, and list anything that needs preparation. If the calendar cannot be reached, say so and stop.”</p></div>
+</div>
+<h3>What scheduled tasks cannot do</h3>
+<ul>
+<li><b>They cannot use folders on your computer.</b> They run in the cloud, so they work with connectors and files stored in your Claude account, not local folders.</li>
+<li><b>They run without you.</b> That is the benefit, and it means nobody is watching. Give a scheduled task read and draft jobs. Keep sending and deleting for when you are present.</li>
+</ul>
+${tip("Start with one scheduled task and read its output for two weeks. If you stop reading it, delete it. A report nobody reads still uses your allowance.")}`,
+        },
+        {
+          id: "l13", title: "Safety, limits, and good judgment", mins: 8,
+          body: `
+<p class="lede">Cowork is useful because it can act. Everything in this last lesson follows from taking that seriously.</p>
+<h3>You are accountable for the output</h3>
+<p>A brief with a wrong date goes out under your name. A budget with a guessed number is your budget. Cowork does the work, and the responsibility stays with you. The three-check review from Lesson 6 is how you meet it.</p>
+<h3>Match the approval mode to the stakes</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Situation</th><th>Mode</th></tr></thead>
+<tbody>
+<tr><td>New kind of task, or files you care about</td><td>Manual</td></tr>
+<tr><td>Routine task in a backed up working folder</td><td>Auto</td></tr>
+<tr><td>Anything that sends, deletes, or pays</td><td>Manual, every time</td></tr>
+</tbody></table></div>
+<h3>Be careful what Cowork reads</h3>
+<p>Web pages, emails, and documents can contain text written to manipulate an AI assistant, such as a hidden line telling it to ignore your request and send data somewhere. Cowork has protections against this, and you are the last one. If a task suddenly does something unrelated to what you asked, stop it and look at what it just read.</p>
+<h3>Keep sensitive material out</h3>
+<ul>
+<li>Do not connect folders holding IDs, tax records, passwords, or other people's private data.</li>
+<li>At work, follow your organization's rules on what may be shared with AI tools.</li>
+<li>Deleting is permanent. Cowork asks before removing files. Read that request with care.</li>
+</ul>
+<h3>Spend your allowance well</h3>
+<ul>
+<li><b>Chat for questions, Cowork for deliverables.</b></li>
+<li><b>Batch related work into one task</b> instead of five small ones.</li>
+<li><b>Align before long tasks</b> so you do not pay for a wrong run.</li>
+<li><b>Check Settings &rarr; Usage</b> when you start working with larger jobs.</li>
+</ul>
+<h3>What you can do now</h3>
+<p>You can decide when a job belongs in Cowork, give it a safe place to work, write a request with an outcome, a format, limits, and a checkpoint, review what comes back, and turn a routine into a skill or a schedule. In four tasks you turned one messy folder into organized files, a brief, a budget workbook, and a research memo.</p>
+<p>Take the final quiz to complete the masterclass.</p>`,
+        },
+      ],
+      quiz: [
+        { q: "What is the safe pattern for email that goes to other people?", a: ["Let Cowork send it in Skip mode", "Cowork drafts, you review and send", "Never use email with Cowork", "Send first, review later"], c: 1, why: "Drafting is low risk. Sending is an action you should review." },
+        { q: "When is it worth turning a prompt into a skill?", a: ["After using it once", "When you have typed nearly the same instructions several times or want others to do it the same way", "Only on Enterprise plans", "Never, prompts cannot be saved"], c: 1, why: "Skills are for instructions you reuse or want to standardize." },
+        { q: "What is a limitation of scheduled tasks?", a: ["They can only run monthly", "They cannot use folders on your computer, because they run in the cloud", "They cannot use connectors", "They only work on mobile"], c: 1, why: "Scheduled runs happen remotely, so they rely on connectors and files stored in your Claude account." },
+        { q: "Partway through a research task, Cowork starts doing something unrelated to your request after reading a web page. What should you do?", a: ["Let it finish", "Stop the task and look at what it just read", "Switch to Skip mode", "Restart your computer"], c: 1, why: "Content can contain instructions aimed at AI assistants. Unexpected behavior is a signal to stop and check." },
+        { q: "Who is accountable for a document Cowork produced that you then share?", a: ["Anthropic", "Cowork", "You", "Nobody"], c: 2, why: "The work goes out under your name, which is why review is part of every task." },
+      ],
+    },
+  ],
+};
+
+</script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const M = COURSE.meta, KEY = M.key;
+  const PASS = 0.75;
+  const lessons = COURSE.modules.flatMap((m) => m.lessons.map((l) => ({ ...l, mod: m })));
+  const total = lessons.length + COURSE.modules.length;
+
+  /* ---------- storage: local first, optional Firestore ---------- */
+  let mem = null, state = { done: {}, quiz: {}, last: "" };
+  const store = {
+    load() { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch { return mem; } },
+    save(s) { mem = s; try { localStorage.setItem(KEY, JSON.stringify(s)); } catch {} },
+  };
+  state = Object.assign(state, store.load() || {});
+  let cloud = null;
+  const merge = (a, b) => {
+    const quiz = { ...a.quiz };
+    for (const k in b.quiz || {}) if (!quiz[k] || b.quiz[k].score > quiz[k].score) quiz[k] = b.quiz[k];
+    return { done: { ...(b.done || {}), ...a.done }, quiz, last: a.last || b.last || "" };
+  };
+  const persist = () => { state.updated = Date.now(); store.save(state); if (cloud) cloud.push(state).catch(() => setSync("Sync failed, saved on this device")); };
+  const setSync = (t) => ($("#sync").textContent = t);
+
+  async function initCloud() {
+    const cfg = window.CM_FIREBASE_CONFIG;
+    if (!cfg || !cfg.apiKey) return;
+    try {
+      const v = "https://www.gstatic.com/firebasejs/10.12.2/";
+      const [{ initializeApp }, A, F] = await Promise.all([import(v + "firebase-app.js"), import(v + "firebase-auth.js"), import(v + "firebase-firestore.js")]);
+      const app = initializeApp(cfg, M.id), auth = A.getAuth(app), db = F.getFirestore(app);
+      const btn = $("#auth"); btn.hidden = false;
+      btn.onclick = () => (auth.currentUser ? A.signOut(auth) : A.signInWithPopup(auth, new A.GoogleAuthProvider()).catch(() => {}));
+      A.onAuthStateChanged(auth, async (u) => {
+        if (!u) { cloud = null; btn.textContent = "Sign in with Google to sync"; $("#who").textContent = ""; setSync("Saved on this device"); return; }
+        btn.textContent = "Sign out"; $("#who").textContent = "Signed in as " + (u.displayName || u.email);
+        const ref = F.doc(db, "users", u.uid, "courses", M.id);
+        cloud = { push: (s) => F.setDoc(ref, { ...s, name: u.displayName || "", email: u.email || "", total, completed: countDone() }, { merge: true }).then(() => setSync("Synced to your account")) };
+        try { const snap = await F.getDoc(ref); if (snap.exists()) state = merge(state, snap.data()); persist(); render(); }
+        catch { setSync("Sync unavailable, saved on this device"); }
+      });
+    } catch { /* offline or blocked: stay local */ }
+  }
+
+  /* ---------- progress ---------- */
+  const passed = (m) => state.quiz[m.id] && state.quiz[m.id].score >= PASS;
+  const countDone = () => lessons.filter((l) => state.done[l.id]).length + COURSE.modules.filter(passed).length;
+  function paintProgress() {
+    const n = countDone(), p = Math.round((n / total) * 100);
+    $("#pct").textContent = $("#pct2").textContent = p + "%";
+    $("#bar").style.width = $("#bar2").style.width = p + "%";
+    $("#count").textContent = n + " of " + total + " done";
+  }
+
+  /* ---------- nav ---------- */
+  let current = "";
+  function paintNav() {
+    $("#nav").innerHTML = COURSE.modules.map((m, i) => {
+      const d = m.lessons.filter((l) => state.done[l.id]).length + (passed(m) ? 1 : 0);
+      return `<h5><span>${i + 1}. ${m.title}</span><span>${d}/${m.lessons.length + 1}</span></h5>` +
+        m.lessons.map((l) => `<button data-go="${l.id}" class="${state.done[l.id] ? "done" : ""} ${current === l.id ? "on" : ""}"><span class="dot"></span><span>${l.title}</span></button>`).join("") +
+        `<button data-go="quiz-${m.id}" class="quiz ${passed(m) ? "done" : ""} ${current === "quiz-" + m.id ? "on" : ""}"><span class="dot"></span><span>Quiz: ${m.title}${state.quiz[m.id] ? " · " + Math.round(state.quiz[m.id].score * 100) + "%" : ""}</span></button>`;
+    }).join("");
+  }
+
+  /* ---------- views ---------- */
+  const order = COURSE.modules.flatMap((m) => [...m.lessons.map((l) => l.id), "quiz-" + m.id]);
+  function home() {
+    const n = countDone(), next = order.find((id) => id.startsWith("quiz-") ? !passed(COURSE.modules.find((m) => "quiz-" + m.id === id)) : !state.done[id]);
+    const mins = lessons.reduce((a, l) => a + l.mins, 0);
+    return `<section class="hero"><div class="eyebrow">${M.eyebrow}</div>
+      <h1>${M.h1}</h1>
+      <p>${M.intro}</p>
+      <div class="cta">${n === total ? `<button class="btn" data-go="finish">View your completion</button>` : `<button class="btn" data-go="${next}">${n ? "Continue where you left off" : "Start lesson 1"}</button>`}
+      ${M.downloads.map((d) => `<a class="btn ghost" download="${d.file}" href="${FILES[d.file]}">${d.label}</a>`).join("")}</div>
+      <div class="stats"><div><b>${lessons.length}</b><span>lessons</span></div><div><b>${COURSE.modules.length}</b><span>quizzes</span></div><div><b>${M.stat[0]}</b><span>${M.stat[1]}</span></div><div><b>~${Math.round(mins / 60 * 2) / 2}h</b><span>total time</span></div></div></section>
+      <h2>The path</h2><div class="mods">${COURSE.modules.map((m, i) => {
+        const d = m.lessons.filter((l) => state.done[l.id]).length + (passed(m) ? 1 : 0);
+        return `<button class="mod" data-go="${m.lessons[0].id}"><span class="n">${i + 1}</span><span><h4>${m.title}</h4><p>${m.blurb}</p></span><span class="pc">${d}/${m.lessons.length + 1}</span></button>`; }).join("")}</div>
+      <p class="small" style="margin-top:28px">${M.note || `Screens and prices checked ${COURSE.checked}. Cursor changes often, so labels may move. This is an independent course and is not affiliated with Cursor.`}</p>${M.footer || ""}`;
+  }
+  function lessonView(l) {
+    const i = order.indexOf(l.id), prev = order[i - 1], next = order[i + 1], mi = COURSE.modules.indexOf(l.mod);
+    return `<div class="eyebrow">Module ${mi + 1} · ${l.mod.title}</div><h1>${l.title}</h1>
+      <div class="meta"><span>Lesson ${lessons.indexOf(lessons.find((x) => x.id === l.id)) + 1} of ${lessons.length}</span><span>About ${l.mins} min</span></div>
+      ${l.body}
+      <div class="foot">${prev ? `<button class="btn ghost" data-go="${prev}">&larr; Back</button>` : "<span></span>"}
+      <span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn ghost done-btn ${state.done[l.id] ? "is" : ""}" data-done="${l.id}">${state.done[l.id] ? "✓ Completed" : "Mark complete"}</button>
+      <button class="btn" data-done="${l.id}" data-go="${next}">${next.startsWith("quiz") ? "Complete and take the quiz" : "Complete and continue"} &rarr;</button></span></div>`;
+  }
+  function quizView(m) {
+    const best = state.quiz[m.id];
+    return `<div class="eyebrow">Module ${COURSE.modules.indexOf(m) + 1} quiz</div><h1>${m.title}</h1>
+      <div class="meta"><span>${m.quiz.length} questions</span><span>${Math.round(PASS * 100)}% to pass</span>${best ? `<span>Best score ${Math.round(best.score * 100)}%</span>` : ""}</div>
+      <form id="quiz">${m.quiz.map((q, i) => `<div class="q"><h4>${i + 1}. ${q.q}</h4>${q.a.map((a, j) => `<label><input type="radio" name="q${i}" value="${j}" required><span>${a}</span></label>`).join("")}<div class="why">${q.why}</div></div>`).join("")}
+      <div class="result" id="result"></div>
+      <div class="foot"><button type="button" class="btn ghost" data-go="${m.lessons[m.lessons.length - 1].id}">&larr; Back to lesson</button><button class="btn" id="submit">Check my answers</button></div></form>`;
+  }
+  function finish() {
+    const avg = Math.round(COURSE.modules.reduce((a, m) => a + (state.quiz[m.id] ? state.quiz[m.id].score : 0), 0) / COURSE.modules.length * 100);
+    return `<div class="cert"><div class="eyebrow">Masterclass complete</div><h2>You finished ${M.title}.</h2>
+      <p>${lessons.length} lessons, ${COURSE.modules.length} quizzes passed, average quiz score ${avg}%.</p>
+      <p class="small">Completed ${new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</p>
+      <div class="cta" style="justify-content:center"><button class="btn" onclick="print()">Print or save as PDF</button><button class="btn ghost" data-go="">Back to overview</button></div></div>`;
+  }
+
+  function render() {
+    const l = lessons.find((x) => x.id === current), m = COURSE.modules.find((x) => "quiz-" + x.id === current);
+    $("#page").innerHTML = l ? lessonView(l) : m ? quizView(m) : current === "finish" ? finish() : home();
+    paintNav(); paintProgress();
+  }
+  function go(id, scroll = true) {
+    current = id || ""; state.last = current; store.save(state);
+    try { history.replaceState(null, "", current ? "#" + current : location.pathname + location.search); } catch {}
+    render(); $("#side").classList.remove("open"); $("#scrim").classList.remove("open");
+    if (scroll) window.scrollTo(0, 0);
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-done],[data-go],.copy,.frame");
+    if (!t) return;
+    if (t.classList.contains("copy")) {
+      const txt = t.closest(".prompt").querySelector("pre").textContent;
+      (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => (t.textContent = "Copied"), () => (t.textContent = "Select and copy"));
+      setTimeout(() => (t.textContent = "Copy"), 1600); return;
+    }
+    if (t.classList.contains("frame")) { $("#lb img").src = t.querySelector("img").src; $("#lb").classList.add("show"); return; }
+    if (t.dataset.done) {
+      const id = t.dataset.done, advancing = "go" in t.dataset;
+      if (advancing || !state.done[id]) state.done[id] = Date.now(); else delete state.done[id];
+      persist(); if (!advancing) return render();
+    }
+    if ("go" in t.dataset) go(t.dataset.go);
+  });
+  document.addEventListener("submit", (e) => {
+    if (e.target.id !== "quiz") return;
+    e.preventDefault();
+    const m = COURSE.modules.find((x) => "quiz-" + x.id === current); let right = 0;
+    e.target.querySelectorAll(".q").forEach((box, i) => {
+      const pick = +new FormData(e.target).get("q" + i); box.classList.add("graded");
+      box.querySelectorAll("label").forEach((lab, j) => { lab.classList.remove("right", "wrong"); if (j === m.quiz[i].c) lab.classList.add("right"); else if (j === pick) lab.classList.add("wrong"); });
+      if (pick === m.quiz[i].c) right++;
+    });
+    const score = right / m.quiz.length, prev = state.quiz[m.id];
+    if (!prev || score > prev.score) state.quiz[m.id] = { score, at: Date.now() };
+    state.quiz[m.id].tries = ((prev && prev.tries) || 0) + 1; persist(); paintNav(); paintProgress();
+    const r = $("#result"), ok = score >= PASS, i = COURSE.modules.indexOf(m), nextM = COURSE.modules[i + 1], all = countDone() === total;
+    r.className = "result show" + (ok ? "" : " fail");
+    r.innerHTML = `<b>${right} of ${m.quiz.length} correct</b><p>${ok ? "Passed. Review the explanations above, then keep going." : "Not quite. Read the explanations above and try again. You need " + Math.round(PASS * 100) + "%."}</p>` +
+      (ok ? `<button type="button" class="btn" data-go="${all ? "finish" : nextM ? nextM.lessons[0].id : ""}">${all ? "See your completion" : nextM ? "Start module " + (i + 2) : "Back to overview"} &rarr;</button>` : `<button type="button" class="btn" data-go="${current}">Try again</button>`);
+    r.scrollIntoView({ block: "center", behavior: "smooth" });
+  });
+  $("#lb").onclick = () => $("#lb").classList.remove("show");
+  document.addEventListener("keydown", (e) => e.key === "Escape" && $("#lb").classList.remove("show"));
+  $("#home").onclick = () => go("");
+  $("#menu").onclick = $("#scrim").onclick = () => { $("#side").classList.toggle("open"); $("#scrim").classList.toggle("open"); };
+  $("#theme").onclick = () => {
+    const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+    document.documentElement.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem(KEY + "-theme", document.documentElement.dataset.theme); } catch {}
+  };
+  let armed = 0;
+  $("#reset").onclick = (e) => {
+    if (Date.now() - armed > 4000) { armed = Date.now(); e.target.textContent = "Click again to confirm reset"; setTimeout(() => (e.target.textContent = "Reset my progress"), 4000); return; }
+    state = { done: {}, quiz: {}, last: "" }; persist(); e.target.textContent = "Reset my progress"; go("");
+  };
+  try { const t = localStorage.getItem(KEY + "-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+  const h = location.hash.slice(1);
+  current = order.includes(h) || h === "finish" ? h : "";
+  render(); initCloud();
+})();
+</script>
+</body>
+</html>
